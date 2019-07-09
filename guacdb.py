@@ -99,8 +99,12 @@ def add_user(username, password):
     db_conn = db_connect()
     cursor = db_conn.cursor()
 
-    salt = str(uuid.uuid4()).replace("-", "") + str(uuid.uuid4()).replace("-", "")
-    password_hash = hashlib.sha256(''.join((password, salt)).encode('UTF-8')).hexdigest()
+    # ensure salt hash is uppercase when stored in postgres - guacamole client requires this - NFI
+    salt = uuid.uuid4()
+    salt_hash = hashlib.sha256(salt.bytes).hexdigest()
+    salt_hash_upper = salt_hash.upper()
+    password_hash = hashlib.sha256(''.join((password, salt_hash_upper)).encode('UTF-8')).hexdigest()
+    print(salt_hash_upper)
     print(password_hash)
 
     entity_id = _get_user_identity(username)
@@ -114,7 +118,7 @@ def add_user(username, password):
 
         cursor.execute("INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date) \
                         SELECT entity_id, decode(%s, 'hex'), decode(%s, 'hex'), CURRENT_TIMESTAMP \
-                        FROM guacamole_entity WHERE name = %s AND guacamole_entity.type = 'USER';", (password_hash, salt, username,))
+                        FROM guacamole_entity WHERE name = %s AND guacamole_entity.type = 'USER';", (password_hash, salt_hash, username,))
 
         cursor.execute("INSERT INTO guacamole_user_permission (entity_id, affected_user_id, permission) \
                         SELECT guacamole_entity.entity_id, guacamole_user.user_id, permission::guacamole_object_permission_type \
@@ -137,6 +141,7 @@ def add_user(username, password):
     db_conn.close()
 
     return True
+
 
 def create_connection(hostname, username, password, protocol="rdp", port="3389"):
 
@@ -193,8 +198,14 @@ def join_connection_to_user(username, hostname):
     entity_id = _get_user_identity(username)
     connection_id = _get_connection_id(hostname)
 
-    cursor.execute("INSERT INTO guacamole_connection_permission (entity_id, connection_id, permission) \
-                    VALUES (%s, %s, 'READ');", (entity_id, connection_id,))
+    cursor.execute("SELECT entity_id from guacamole_connection_permission where entity_id=%s AND connection_id=%s;", (entity_id, connection_id,))
+    connection_map_exists = cursor.fetchone()
+
+    if connection_map_exists is None:
+        cursor.execute("INSERT INTO guacamole_connection_permission (entity_id, connection_id, permission) \
+                        VALUES (%s, %s, 'READ');", (entity_id, connection_id,))
+    else:
+        print("Connection map already exists")
 
     # Make the changes to the database persistent
     db_conn.commit()
@@ -211,11 +222,9 @@ def main():
 
     create_connection(hostname='desktop', username='user', password='KL3ECRd9dd68xFsZ')
 
-    add_user(username='user', password='password')
+    add_user(username='user3', password='password')
 
-    join_connection_to_user(username='user', hostname='desktop')
+    join_connection_to_user(username='user3', hostname='desktop')
 
 if __name__ == '__main__':
     main()
-
-
