@@ -39,6 +39,25 @@ def db_connect():
     return db_conn
 
 
+def _get_user_id(entity_id):
+
+    db_conn = db_connect()
+    cursor = db_conn.cursor()
+
+    # Execute a command: this creates a new table
+
+    cursor.execute("SELECT user_id from guacamole_user where entity_id=%s;", (entity_id,))
+    user_id =  cursor.fetchone()
+    # Make the changes to the database persistent
+    db_conn.commit()
+
+    # Close communication with the database
+    cursor.close()
+    db_conn.close()
+
+    return user_id
+
+
 def _get_user_identity(username):
 
     db_conn = db_connect()
@@ -56,6 +75,24 @@ def _get_user_identity(username):
     db_conn.close()
 
     return entity_id
+
+
+def _get_connection_id(hostname):
+
+    db_conn = db_connect()
+    cursor = db_conn.cursor()
+
+    cursor.execute("SELECT connection_id from guacamole_connection where connection_name=%s;", (hostname,))
+    connection_id =  cursor.fetchone()
+
+    # Make the changes to the database persistent
+    db_conn.commit()
+
+    # Close communication with the database
+    cursor.close()
+    db_conn.close()
+
+    return connection_id
 
 
 def add_user(username, password):
@@ -78,11 +115,19 @@ def add_user(username, password):
         cursor.execute("INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date) \
                         SELECT entity_id, decode(%s, 'hex'), decode(%s, 'hex'), CURRENT_TIMESTAMP \
                         FROM guacamole_entity WHERE name = %s AND guacamole_entity.type = 'USER';", (password_hash, salt, username,))
+
+        cursor.execute("INSERT INTO guacamole_user_permission (entity_id, affected_user_id, permission) \
+                        SELECT guacamole_entity.entity_id, guacamole_user.user_id, permission::guacamole_object_permission_type \
+                        FROM (VALUES (%s, %s, 'READ')) permissions (username, affected_username, permission) \
+                        JOIN guacamole_entity          ON permissions.username = guacamole_entity.name AND guacamole_entity.type = 'USER' \
+                        JOIN guacamole_entity affected ON permissions.affected_username = affected.name AND guacamole_entity.type = 'USER' \
+                        JOIN guacamole_user            ON guacamole_user.entity_id = affected.entity_id;", (username,username,))
+
     else:
         msg = 'Retrieved entity id for user: {0} id: {1}'.format(username, entity_id[0])
         print(msg)
 
-        # Update passowrd entry
+        # Update password entry
 
     # Make the changes to the database persistent
     db_conn.commit()
@@ -92,7 +137,6 @@ def add_user(username, password):
     db_conn.close()
 
     return True
-
 
 def create_connection(hostname, username, password, protocol="rdp", port="3389"):
 
@@ -141,12 +185,35 @@ def create_connection(hostname, username, password, protocol="rdp", port="3389")
     return True
 
 
+def join_connection_to_user(username, hostname):
+    
+    db_conn = db_connect()
+    cursor = db_conn.cursor()
+
+    entity_id = _get_user_identity(username)
+    connection_id = _get_connection_id(hostname)
+
+    cursor.execute("INSERT INTO guacamole_connection_permission (entity_id, connection_id, permission) \
+                    VALUES (%s, %s, 'READ');", (entity_id, connection_id,))
+
+    # Make the changes to the database persistent
+    db_conn.commit()
+
+    # Close communication with the database
+    cursor.close()
+    db_conn.close()
+    
+    return True
+
+
 def main():
     print("Starting Guacamole Broker")
 
     create_connection(hostname='desktop', username='user', password='KL3ECRd9dd68xFsZ')
 
     add_user(username='user', password='password')
+
+    join_connection_to_user(username='user', hostname='desktop')
 
 if __name__ == '__main__':
     main()
