@@ -1,0 +1,5 @@
+openshift
+kubernetes
+psycopg2
+uvicorn
+fastapi
