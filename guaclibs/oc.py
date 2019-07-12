@@ -8,7 +8,7 @@ class GuacOC():
 
     def oc_connection(self):
 
-        k8s_client = config.new_client_from_config()
+        k8s_client = config.load_incluster_config
         dyn_client = DynamicClient(k8s_client)
 
         v1_projects = dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project')
