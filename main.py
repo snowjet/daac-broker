@@ -5,11 +5,6 @@ from guaclibs.oc import GuacOC
 
 app = FastAPI()
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: bool = None
-
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -42,10 +37,20 @@ def get_users():
 
     return {"users": msg}
 
-@app.get("/projects/")
-def get_project():
+
+@app.get("/projects")
+def get_projects():
 
     myoc = GuacOC()
-    project_list = myoc.oc_connection()
+    project_list = myoc.list_projects()
 
     return {"projects:", project_list}
+
+
+@app.get("/services")
+def get_services():
+
+    myoc = GuacOC()
+    service_list = myoc.list_services()
+
+    return {"services:", service_list}

@@ -36,10 +36,11 @@ class GuacDatabaseAccess():
                         " user=" + POSTGRES_USER + \
                         " password="+ POSTGRES_PASSWORD
 
-        # self.db_conn = psycopg2.connect(conn_string)
-        self.db_conn = "test"
+        self.db_conn = psycopg2.connect(conn_string)
+
 
     def test(self):
+        # TEST DB
 
         return "test success"
 
