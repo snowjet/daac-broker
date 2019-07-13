@@ -25,5 +25,6 @@ def main():
 
     # guacdb.disconnect()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
