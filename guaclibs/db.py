@@ -4,52 +4,49 @@ import sys
 import uuid
 import hashlib
 
+
 class GuacDatabaseAccess():
 
     def __init__(self):
         
         print("Database Connecting")
 
-        # Ensure postgres db is connectable
+        # Ensure Postgres db is connectable
         if os.environ.get('POSTGRES_HOST'):
-            POSTGRES_HOST =  os.environ['POSTGRES_HOST']
+            POSTGRES_HOST = os.environ['POSTGRES_HOST']
         else:
             POSTGRES_HOST = 'postgres'
 
         if os.environ.get('POSTGRES_USER'):
-            POSTGRES_USER =  os.environ['POSTGRES_USER']
+            POSTGRES_USER = os.environ['POSTGRES_USER']
         else:
             sys.exit(255)
 
         if os.environ.get('POSTGRES_PASSWORD'):
-            POSTGRES_PASSWORD =  os.environ['POSTGRES_PASSWORD']
+            POSTGRES_PASSWORD = os.environ['POSTGRES_PASSWORD']
         else:
             sys.exit(255)
 
         if os.environ.get('POSTGRES_DATABASE'):
-            POSTGRES_DATABASE =  os.environ['POSTGRES_DATABASE']
+            POSTGRES_DATABASE = os.environ['POSTGRES_DATABASE']
         else:
             POSTGRES_DATABASE = 'guacamole_db'
 
-        conn_string = "host="+ POSTGRES_HOST +" port="+ "5432" + \
-                        " dbname="+ POSTGRES_DATABASE + \
+        conn_string = "host=" + POSTGRES_HOST + " port=" + "5432" + \
+                      " dbname=" + POSTGRES_DATABASE + \
                         " user=" + POSTGRES_USER + \
-                        " password="+ POSTGRES_PASSWORD
+                        " password=" + POSTGRES_PASSWORD
 
         self.db_conn = psycopg2.connect(conn_string)
 
-
     def test(self):
         # TEST DB
-
         return "test success"
-
 
     def disconnect(self):
 
         self.db_conn.commit()
         self.db_conn.close()
-
 
     def _get_user_id(self, entity_id):
 
@@ -64,7 +61,6 @@ class GuacDatabaseAccess():
         cursor.close()
 
         return user_id
-
 
     def _get_user_identity(self, username):
 
