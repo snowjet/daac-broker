@@ -31,7 +31,6 @@ Tokens:              guacrobot-token-c7hhc
                      guacrobot-token-k44m7
 Events:              <none>
 
-
 oc describe secret guacrobot-token-c7hhc
 Name:         guacrobot-token-c7hhc
 Namespace:    guac
@@ -47,4 +46,14 @@ ca.crt:          2719 bytes
 namespace:       4 bytes
 service-ca.crt:  3835 bytes
 token:           <------token------->
+
+
+oc get rolebindings
+NAME                    ROLE                    USERS                                   GROUPS                        SERVICE ACCOUNTS   SUBJECTS
+admin                   /admin                  snowjet
+admin-0                 /admin                                                                                        guacrobot
+system:deployers        /system:deployer                                                                              deployer
+system:image-builders   /system:image-builder                                                                         builder
+system:image-pullers    /system:image-puller                                            system:serviceaccounts:guac
+
 ```
