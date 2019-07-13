@@ -1,8 +1,9 @@
+import hashlib
 import os
-import psycopg2
 import sys
 import uuid
-import hashlib
+
+import psycopg2
 
 
 class GuacDatabaseAccess:

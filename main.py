@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+
 from guaclibs.db import GuacDatabaseAccess
 from guaclibs.oc import GuacOC
-
 
 app = FastAPI()
 

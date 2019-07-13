@@ -1,5 +1,6 @@
 import os
 import sys
+
 import yaml
 from kubernetes import client, config
 from openshift.dynamic import DynamicClient
