@@ -4,16 +4,21 @@
 
 # Required Variables
 
+```bash
 export POSTGRES_USER='guac'
 export POSTGRES_PASSWORD='guac_pass'
 export POSTGRES_DATABASE='guacamole_db'
-
+```
 
 ### Service Account
 
+* need to reduce the access level for this service account.
+
 ```bash
 oc create serviceaccount guacrobot
-oc policy add-role-to-user admin system:serviceaccounts:test:guacrobot
+
+oc policy add-role-to-user admin -z guacrobot
+
 oc describe serviceaccount guacrobot
 Name:                guacrobot
 Namespace:           guac
