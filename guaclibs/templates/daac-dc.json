@@ -1,0 +1,107 @@
+{
+    "apiVersion": "v1",
+    "kind": "DeploymentConfig",
+    "metadata": {
+        "annotations": {
+            "description": "Defines how to deploy a Desktop as a Container"
+        },
+        "labels": {
+            "app": "desktop-{username}"
+        },
+        "name": "desktop-{username}"
+    },
+    "spec": {
+        "replicas": 1,
+        "selector": {
+            "name": "desktop-{username}"
+        },
+        "strategy": {
+            "type": "Rolling"
+        },
+        "template": {
+            "metadata": {
+                "labels": {
+                    "name": "desktop-{username}"
+                },
+                "name": "desktop-{username}"
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "env": [
+                            {
+                                "name": "XRDP_PASSWORD",
+                                "value": "{XRDP_PASSWORD}"
+                            }
+                        ],
+                        "image": "gdesk:latest",
+                        "imagePullPolicy": "Always",
+                        "livenessProbe": {
+                            "initialDelaySeconds": 15,
+                            "periodSeconds": 2,
+                            "tcpSocket": {
+                                "port": "rdp"
+                            }
+                        },
+                        "name": "desktop-{username}",
+                        "ports": [
+                            {
+                                "containerPort": 3389,
+                                "name": "rdp"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "initialDelaySeconds": 5,
+                            "periodSeconds": 10,
+                            "tcpSocket": {
+                                "port": "rdp"
+                            }
+                        },
+                        "resources": {
+                            "limits": {
+                                "cpu": "1500m",
+                                "memory": "4Gi"
+                            },
+                            "requests": {
+                                "cpu": "50m",
+                                "memory": "512Mi"
+                            },
+                            "volumeMounts": [
+                                {
+                                    "mountPath": "/dev/shm",
+                                    "name": "dshm"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "volumes": [
+                    {
+                        "emptyDir": {
+                            "medium": "Memory"
+                        },
+                        "name": "dshm"
+                    }
+                ]
+            }
+        },
+        "triggers": [
+            {
+                "type": "ConfigChange"
+            },
+            {
+                "imageChangeParams": {
+                    "automatic": true,
+                    "containerNames": [
+                        "desktop-{username}"
+                    ],
+                    "from": {
+                        "kind": "ImageStreamTag",
+                        "name": "gdesk:latest"
+                    }
+                },
+                "type": "ImageChange"
+            }
+        ]
+    }
+}

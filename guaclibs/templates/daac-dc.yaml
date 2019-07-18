@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    description: Defines how to deploy a Desktop as a Container
+  labels:
+    app: desktop-{username}
+  name: desktop-{username}
+spec:
+  replicas: 1
+  selector:
+    name: desktop-{username}
+  strategy:
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        name: desktop-{username}
+      name: desktop-{username}    
+    spec:
+      containers:
+      - name: desktop-{username}
+        image: gdesk:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 1500m
+            memory: 4Gi
+          requests:
+            cpu: 50m
+            memory: 512Mi
+          volumeMounts:                 
+            - mountPath: /dev/shm
+              name: dshm        
+        ports:
+        - name: rdp
+          containerPort: 3389
+        env:
+        - name: XRDP_PASSWORD
+          value: "{XRDP_PASSWORD}"
+        readinessProbe:
+          tcpSocket:
+            port: rdp
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: rdp
+          initialDelaySeconds: 15
+          periodSeconds: 2
+      volumes:                          
+        - name: dshm
+          emptyDir:
+            medium: Memory
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: True
+      containerNames:
+      - desktop-{username}
+      from:
+        kind: ImageStreamTag
+        name: gdesk:latest
+    type: ImageChange

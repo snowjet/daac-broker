@@ -1,90 +1,21 @@
+#!/usr/bin/env python
+
+import base64
+import random
+import string
 import os
 import sys
-
 import yaml
-from kubernetes import client, config
-from openshift.dynamic import DynamicClient
+import json
 
 
-class GuacOC:
-    def __init__(self):
+def main():
+    print("Starting Yaml Test")
 
-        # Check if code is running in OpenShift
-        if "OPENSHIFT_BUILD_NAME" in os.environ:
-            config.load_incluster_config()
-            file_namespace = open(
-                "/run/secrets/kubernetes.io/serviceaccount/namespace", "r"
-            )
-            if file_namespace.mode == "r":
-                self.namespace = file_namespace.read()
-                print(self.namespace)
-        else:
-            config.load_kube_config()
+    username = 'user01'
+    XRDP_PASSWORD = 'pass'
 
-        # Create a client config
-        self.k8s_config = client.Configuration()
-
-        """ OCP Dynamic client requires the parameter configuration to be set
-            else it will fail to load an in cluster configuration
-        """
-        self.k8s_client = client.api_client.ApiClient(configuration=self.k8s_config)
-        self.dyn_client = DynamicClient(self.k8s_client)
-
-    def list_projects(self):
-
-        v1_projects = self.dyn_client.resources.get(
-            api_version="project.openshift.io/v1", kind="Project"
-        )
-
-        project_list = v1_projects.get()
-
-        return project_list
-
-    def list_services(self):
-
-        v1_services = self.dyn_client.resources.get(api_version="v1", kind="Service")
-
-        service_list = v1_services.get(namespace=self.namespace)
-
-        return service_list
-
-    def create_service(self, username):
-
-        username = username
-
-        v1_service = self.dyn_client.resources.get(api_version='v1', kind='Service')
-
-        body = {
-            "apiVersion": "v1",
-            "kind": "Service",
-            "metadata": {
-                "name": "svc-%s" % (username)
-            },
-            "spec": {
-                "ports": [
-                    {
-                        "port": 8080,
-                        "protocol": "TCP",
-                        "targetPort": 8080
-                    }
-                ],
-                "selector": {
-                    "name": "desktop-%s" % (username)
-                }
-            }
-        }
-
-        v1_service.create(body=body, namespace=self.namespaces)
-
-    def create_desktop(self, username, XRDP_PASSWORD):
-
-        username = username
-
-        XRDP_PASSWORD = XRDP_PASSWORD
-
-        v1_DeploymentConfig = self.dyn_client.resources.get(api_version='v1', kind='DeploymentConfig')
-
-        body = {
+    configIn = {
             "apiVersion": "v1",
             "kind": "DeploymentConfig",
             "metadata": {
@@ -192,4 +123,12 @@ class GuacOC:
             }
         }
 
-        v1_DeploymentConfig.create(body=body, namespace=self.namespaces)
+    json_body = json.load(configIn)
+
+    print(json_body)
+
+    #configOut = yaml.dump(configIn)
+    #print(configOut)
+
+if __name__ == "__main__":
+    main()
