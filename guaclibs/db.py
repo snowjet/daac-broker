@@ -278,3 +278,29 @@ class GuacDatabaseAccess:
         cursor.close()
 
         return True
+
+    def load_schmea_safe(self):
+
+        self.db_conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cursor = self.db_conn.cursor()
+
+        # First check if postgres already has a schema
+        cursor.execute(
+            "SELECT EXISTS ( SELECT 1 \
+                        FROM   pg_tables \
+                        WHERE  schemaname = 'public' \
+                        AND    tablename = 'guacamole_connection' \
+                        );"
+        )
+
+        table_exists = cursor.fetchall()
+
+        if not table_exists[0][0]:
+            print("Schema Not Found")
+            db_schema = os.path.join(os.path.dirname(__file__), "db_schema/initdb.sql")
+            sql_file = open(db_schema, "r")
+            cursor.execute(sql_file.read())
+        else:
+            print("tables already has a schema")
+
+        return True

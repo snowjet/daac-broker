@@ -7,13 +7,16 @@ from guaclibs.oc import GuacOC
 def main():
     print("Starting Guacamole Test")
 
-    myoc = GuacOC()
-    project_list = myoc.oc_connection()
-    print(project_list)
+    # myoc = GuacOC()
+    # project_list = myoc.oc_connection()
+    # print(project_list)
 
-    # guacdb = GuacDatabaseAccess()
-    # msg = guacdb.test()
-    # print(msg)
+    guacdb = GuacDatabaseAccess()
+    msg = guacdb.test()
+    print(msg)
+
+    guacdb.load_schmea_safe()
+    guacdb.disconnect()
 
     # guacdb = GuacDatabaseAccess()
 

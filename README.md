@@ -5,6 +5,7 @@
 # Required Variables
 
 ```bash
+export POSTGRES_HOST='127.0.0.1'
 export POSTGRES_USER='guac'
 export POSTGRES_PASSWORD='guac_pass'
 export POSTGRES_DATABASE='guacamole_db'

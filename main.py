@@ -7,6 +7,9 @@ from guaclibs.oc import GuacOC
 app = FastAPI()
 
 
+class DCaaS_Params(BaseModel):
+    password: str
+
 @app.get("/")
 def read_root():
     return {"Guac API Broker - connect to /docs for an API breakdown"}
@@ -22,7 +25,7 @@ def get_all_users():
 
 
 @app.get("/users/{username}")
-def get_users():
+def get_users(username: str):
 
     guacdb = GuacDatabaseAccess()
     msg = guacdb.test()
@@ -46,3 +49,11 @@ def get_services():
     service_list = myoc.list_services()
 
     return {"services:", service_list}
+
+@app.put("/add-user/{username}"
+def add_user(username: str, dcaas_params: DCaaS_Params):
+
+    guacdb = GuacDatabaseAccess()
+    myoc = GuacOC()
+
+    return {"user-added": username}
