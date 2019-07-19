@@ -146,7 +146,9 @@ class GuacOC:
 
         v1_DeploymentConfig.create(body=body, namespace=self.namespaces)
 
-    def deploy_user_daac(self, username, XRDP_PASSWORD):
+    def deploy_user_daac(self, username, password):
+
+        XRDP_PASSWORD = password
 
         self._create_desktop(username, XRDP_PASSWORD)
         self._create_service(username, XRDP_PASSWORD)

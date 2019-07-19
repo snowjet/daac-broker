@@ -56,4 +56,14 @@ def add_user(username: str, dcaas_params: DCaaS_Params):
     guacdb = GuacDatabaseAccess()
     myoc = GuacOC()
 
+    hostname = f'desktop-{username}'
+    password = 'password'
+    rdp_password = 'password'
+
+    guacdb.add_user(username, password)
+    guacdb.create_connection(username, hostname, password=rdp_passwords)
+    guacdb.join_connection_to_user(username, hostname)
+
+    myoc.deploy_user_daac(username, password)
+
     return {"user-added": username}

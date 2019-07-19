@@ -47,10 +47,6 @@ class GuacDatabaseAccess:
 
         self.db_conn = psycopg2.connect(conn_string)
 
-    def test(self):
-        # TEST DB
-        return "test success"
-
     def disconnect(self):
 
         self.db_conn.commit()
@@ -170,10 +166,9 @@ class GuacDatabaseAccess:
         return True
 
     def create_connection(
-        self, hostname, username, password, protocol="rdp", port="3389"
+        self, username, hostname, password, protocol="rdp", port="3389"
     ):
-
-        name = hostname
+        con_name = hostname
         cursor = self.db_conn.cursor()
 
         # Need to check if the hostname already exists - then we are just udpdating - Determine the connection_id
@@ -184,18 +179,18 @@ class GuacDatabaseAccess:
         connection_id = cursor.fetchone()
 
         if connection_id is None:
-            msg = "Adding new connection by name: {0}".format(name)
+            msg = "Adding new connection by name: {0}".format(con_name)
             print(msg)
 
             cursor.execute(
                 "INSERT INTO guacamole_connection (connection_name, protocol) VALUES (%s, %s);",
-                (name, protocol),
+                (con_name, protocol),
             )
 
             # Now Determine the connection_id
             cursor.execute(
                 "SELECT connection_id FROM guacamole_connection WHERE connection_name = %s AND parent_id IS NULL;",
-                (name,),
+                (con_name,),
             )
             connection_id = cursor.fetchone()
 
@@ -218,7 +213,7 @@ class GuacDatabaseAccess:
             )
         else:
             msg = "Connection ID already exists for {0} id is:{1}".format(
-                name, connection_id[0]
+                con_name, connection_id[0]
             )
             print(msg)
 

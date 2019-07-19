@@ -12,8 +12,6 @@ def main():
     # print(project_list)
 
     guacdb = GuacDatabaseAccess()
-    msg = guacdb.test()
-    print(msg)
 
     guacdb.load_schmea_safe()
     guacdb.disconnect()
