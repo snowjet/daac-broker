@@ -5,6 +5,11 @@ import uuid
 
 import psycopg2
 
+from guaclibs.log import daac_logging
+
+log = daac_logging()
+logger = log.get_logger()
+
 
 class GuacDatabaseAccess:
     def __init__(self):
@@ -159,8 +164,6 @@ class GuacDatabaseAccess:
             )
             print(msg)
 
-            # Update password entry
-
         # Make the changes to the database persistent
         self.db_conn.commit()
 
@@ -214,6 +217,57 @@ class GuacDatabaseAccess:
             cursor.execute(
                 "INSERT INTO guacamole_connection_parameter VALUES (%s, 'password', %s);",
                 (connection_id[0], password),
+            )
+        else:
+            msg = "Connection ID already exists for {0} id is:{1}".format(
+                con_name, connection_id[0]
+            )
+            print(msg)
+
+            print("Updating connection params")
+            # Update entry
+            cursor.execute(
+                "UPDATE guacamole_connection_parameter SET parameter_value=%s WHERE connection_id=%s AND parameter_name='hostname';",
+                (hostname, connection_id[0]),
+            )
+            cursor.execute(
+                "UPDATE guacamole_connection_parameter SET parameter_value=%s WHERE connection_id=%s AND parameter_name='port';",
+                (port, connection_id[0]),
+            )
+            cursor.execute(
+                "UPDATE guacamole_connection_parameter SET parameter_value=%s WHERE connection_id=%s AND parameter_name='username';",
+                (username, connection_id[0]),
+            )
+            cursor.execute(
+                "UPDATE guacamole_connection_parameter SET parameter_value=%s WHERE connection_id=%s AND parameter_name='password';",
+                (password, connection_id[0]),
+            )
+
+        # Make the changes to the database persistent
+        self.db_conn.commit()
+
+        # Close communication with the database
+        cursor.close()
+
+        return True
+
+    def update_connection(
+        self, username, hostname, password, protocol="rdp", port="3389"
+    ):
+        con_name = hostname
+        cursor = self.db_conn.cursor()
+
+        # Need to check if the hostname already exists - then we are just udpdating - Determine the connection_id
+        cursor.execute(
+            "SELECT connection_id FROM guacamole_connection WHERE connection_name = %s AND parent_id IS NULL;",
+            (hostname,),
+        )
+        connection_id = cursor.fetchone()
+
+        if connection_id is None:
+            logger.info(
+                "Cannot update connection as it doesn't exist:",
+                connection_name=con_name,
             )
         else:
             msg = "Connection ID already exists for {0} id is:{1}".format(
