@@ -2,3 +2,4 @@ openshift
 psycopg2-binary
 uvicorn
 fastapi
+daiquiri

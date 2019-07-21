@@ -1,10 +1,14 @@
 import os
-import sys
 
-import yaml
+import openshift
+
 from kubernetes import client, config
 from openshift.dynamic import DynamicClient
 
+from guaclibs.log import daac_logging
+
+log = daac_logging()
+logger = log.get_logger()
 
 class GuacOC:
     def __init__(self):
@@ -50,101 +54,134 @@ class GuacOC:
 
     def _create_service(self, username):
 
-        username = username
+        try:
 
-        v1_service = self.dyn_client.resources.get(api_version="v1", kind="Service")
+            username = username
+            service_name = "desktop-%s" % (username)
+            desktop_name = "desktop-%s" % (username)
 
-        body = {
-            "apiVersion": "v1",
-            "kind": "Service",
-            "metadata": {"name": "svc-%s" % (username)},
-            "spec": {
-                "ports": [{"port": 8080, "protocol": "TCP", "targetPort": 8080}],
-                "selector": {"name": "desktop-%s" % (username)},
-            },
-        }
+            v1_service = self.dyn_client.resources.get(api_version="v1", kind="Service")
 
-        v1_service.create(body=body, namespace=self.namespace)
+            service_exists = v1_service.get(name=service_name, namespace=self.namespace)
+
+            logger.info("Print if service exists", service=service_exists)
+
+            body = {
+                "apiVersion": "v1",
+                "kind": "Service",
+                "metadata": {"name": "%s" % (service_name)},
+                "spec": {
+                    "ports": [{"port": 3389, "protocol": "TCP", "targetPort": 3389}],
+                    "selector": {"name": "%s" % (desktop_name)},
+                },
+            }
+
+            v1_service.create(body=body, namespace=self.namespace)
+
+        except openshift.dynamic.exceptions.ConflictError as error_msg:
+            logger.warn("Conflict error: Likely resource already exists", error=error_msg)
+        
+        except Exception as error_msg:
+            logger.error("Error Occured starting guac-api", error=error_msg)        
 
     def _create_desktop(self, username, XRDP_PASSWORD):
 
-        username = username
+        try:
 
-        XRDP_PASSWORD = XRDP_PASSWORD
+            username = username
+            desktop_name = "desktop-%s" % (username)
 
-        v1_DeploymentConfig = self.dyn_client.resources.get(
-            api_version="v1", kind="DeploymentConfig"
-        )
+            XRDP_PASSWORD = XRDP_PASSWORD
 
-        body = {
-            "apiVersion": "v1",
-            "kind": "DeploymentConfig",
-            "metadata": {
-                "annotations": {
-                    "description": "Defines how to deploy a Desktop as a Container"
-                },
-                "labels": {"app": "desktop-%s" % (username)},
-                "name": "desktop-%s" % (username),
-            },
-            "spec": {
-                "replicas": 1,
-                "selector": {"name": "desktop-%s" % (username)},
-                "strategy": {"type": "Rolling"},
-                "template": {
-                    "metadata": {
-                        "labels": {"name": "desktop-%s" % (username)},
-                        "name": "desktop-%s" % (username),
+            v1_DeploymentConfig = self.dyn_client.resources.get(
+                api_version="v1", kind="DeploymentConfig"
+            )
+
+            dc_exists = v1_DeploymentConfig.get(name=desktop_name, namespace=self.namespace)
+
+            logger.info("Print if dc exists", service=dc_exists)
+
+            body = {
+                "apiVersion": "v1",
+                "kind": "DeploymentConfig",
+                "metadata": {
+                    "annotations": {
+                        "description": "Defines how to deploy a Desktop as a Container"
                     },
-                    "spec": {
-                        "containers": [
-                            {
-                                "env": [
-                                    {
-                                        "name": "XRDP_PASSWORD",
-                                        "value": "%s" % (XRDP_PASSWORD),
-                                    }
-                                ],
-                                "image": "gdesk:latest",
-                                "imagePullPolicy": "Always",
-                                "livenessProbe": {
-                                    "initialDelaySeconds": 15,
-                                    "periodSeconds": 2,
-                                    "tcpSocket": {"port": "rdp"},
-                                },
-                                "name": "desktop-%s" % (username),
-                                "ports": [{"containerPort": 3389, "name": "rdp"}],
-                                "readinessProbe": {
-                                    "initialDelaySeconds": 5,
-                                    "periodSeconds": 10,
-                                    "tcpSocket": {"port": "rdp"},
-                                },
-                                "resources": {
-                                    "limits": {"cpu": "1500m", "memory": "4Gi"},
-                                    "requests": {"cpu": "50m", "memory": "512Mi"},
-                                    "volumeMounts": [
-                                        {"mountPath": "/dev/shm", "name": "dshm"}
-                                    ],
-                                },
-                            }
-                        ],
-                        "volumes": [{"emptyDir": {"medium": "Memory"}, "name": "dshm"}],
-                    },
+                    "labels": {"app": "desktop-%s" % (username)},
+                    "name": "desktop-%s" % (username),
                 },
-                "triggers": [
-                    {"type": "ConfigChange"},
-                    {
-                        "imageChangeParams": {
-                            "automatic": True,
-                            "containerNames": ["desktop-%s" % (username)],
-                            "from": {"kind": "ImageStreamTag", "name": "gdesk:latest"},
+                "spec": {
+                    "replicas": 1,
+                    "selector": {"name": "desktop-%s" % (username)},
+                    "strategy": {"type": "Rolling"},
+                    "template": {
+                        "metadata": {
+                            "labels": {"name": "desktop-%s" % (username)},
+                            "name": "desktop-%s" % (username),
                         },
-                        "type": "ImageChange",
+                        "spec": {
+                            "containers": [
+                                {
+                                    "env": [
+                                        {
+                                            "name": "XRDP_PASSWORD",
+                                            "value": "%s" % (XRDP_PASSWORD),
+                                        }
+                                    ],
+                                    "image": "gdesk:latest",
+                                    "imagePullPolicy": "Always",
+                                    "livenessProbe": {
+                                        "initialDelaySeconds": 15,
+                                        "periodSeconds": 2,
+                                        "tcpSocket": {"port": "rdp"},
+                                    },
+                                    "name": "desktop-%s" % (username),
+                                    "ports": [{"containerPort": 3389, "name": "rdp"}],
+                                    "readinessProbe": {
+                                        "initialDelaySeconds": 5,
+                                        "periodSeconds": 10,
+                                        "tcpSocket": {"port": "rdp"},
+                                    },
+                                    "resources": {
+                                        "limits": {"cpu": "1500m", "memory": "4Gi"},
+                                        "requests": {"cpu": "50m", "memory": "512Mi"},
+                                        "volumeMounts": [
+                                            {"mountPath": "/dev/shm", "name": "dshm"}
+                                        ],
+                                    },
+                                }
+                            ],
+                            "volumes": [
+                                {"emptyDir": {"medium": "Memory"}, "name": "dshm"}
+                            ],
+                        },
                     },
-                ],
-            },
-        }
+                    "triggers": [
+                        {"type": "ConfigChange"},
+                        {
+                            "imageChangeParams": {
+                                "automatic": True,
+                                "containerNames": ["desktop-%s" % (username)],
+                                "from": {
+                                    "kind": "ImageStreamTag",
+                                    "name": "gdesk:latest",
+                                },
+                            },
+                            "type": "ImageChange",
+                        },
+                    ],
+                },
+            }
 
-        v1_DeploymentConfig.create(body=body, namespace=self.namespace)
+            v1_DeploymentConfig.create(body=body, namespace=self.namespace)
+
+        except openshift.dynamic.exceptions.ConflictError as error_msg:
+            logger.warn("Conflict error: Likely resource already exists", error=error_msg)
+            pass
+        
+        except Exception as error_msg:
+            logger.error("Error Occured starting guac-api", error=error_msg)
 
     def deploy_user_daac(self, username, password):
 
