@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+from guaclibs.security import generate_password
 from guaclibs.db import GuacDatabaseAccess
 from guaclibs.oc import GuacOC
 
@@ -59,13 +60,14 @@ def add_user(username: str, dcaas_params: DCaaS_Params):
     myoc = GuacOC()
 
     hostname = f"desktop-{username}"
-    password = "password"
-    rdp_password = "password"
+    password = dcaas_params.password
+
+    rdp_password = generate_password()
 
     guacdb.add_user(username, password)
     guacdb.create_connection(username, hostname, password=rdp_password)
     guacdb.join_connection_to_user(username, hostname)
 
-    myoc.deploy_user_daac(username, password)
+    myoc.deploy_user_daac(username, rdp_password)
 
     return {"user-added": username}
