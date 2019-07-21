@@ -8,5 +8,5 @@ if __name__ == "__main__":
     guacdb.disconnect()
 
     uvicorn.run(
-        app="main:app", host="0.0.0.0", port=8080, log_level="info", reload=True
+        app="api.main:app", host="0.0.0.0", port=8080, log_level="info", reload=True
     )

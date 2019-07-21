@@ -1,5 +1,4 @@
 openshift
-kubernetes
-psycopg2
+psycopg2-binary
 uvicorn
 fastapi

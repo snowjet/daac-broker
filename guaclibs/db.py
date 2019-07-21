@@ -52,6 +52,10 @@ class GuacDatabaseAccess:
         self.db_conn.commit()
         self.db_conn.close()
 
+    def test(self):
+
+        return "Test"
+
     def _get_user_id(self, entity_id):
 
         cursor = self.db_conn.cursor()
