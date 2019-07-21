@@ -64,7 +64,7 @@ class GuacOC:
             },
         }
 
-        v1_service.create(body=body, namespace=self.namespaces)
+        v1_service.create(body=body, namespace=self.namespace)
 
     def _create_desktop(self, username, XRDP_PASSWORD):
 
@@ -144,13 +144,13 @@ class GuacOC:
             },
         }
 
-        v1_DeploymentConfig.create(body=body, namespace=self.namespaces)
+        v1_DeploymentConfig.create(body=body, namespace=self.namespace)
 
     def deploy_user_daac(self, username, password):
 
         XRDP_PASSWORD = password
 
         self._create_desktop(username, XRDP_PASSWORD)
-        self._create_service(username, XRDP_PASSWORD)
+        self._create_service(username)
 
         return True
