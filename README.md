@@ -30,3 +30,7 @@ system:image-builders   /system:image-builder                                   
 system:image-pullers    /system:image-puller                                            system:serviceaccounts:guac
 
 ```
+
+### OpenShift
+
+oc new-app --name guac-api -e POSTGRES_HOST='127.0.0.1' -e POSTGRES_USER='guac' -e POSTGRES_PASSWORD='guac_pass' -e POSTGRES_DATABASE='guacamole_db' https://github.com/snowjet/daac-broker.git

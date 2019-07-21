@@ -99,7 +99,7 @@ class GuacOpenShiftAccess:
         except Exception as error_msg:
             logger.error("Error Occured starting guac-api", error=error_msg)
 
-    def _create_dc_body(self, desktop_name, rdp_password):
+    def _create_dc_body(self, username, desktop_name, rdp_password):
 
         body = {
             "apiVersion": "v1",
@@ -127,7 +127,11 @@ class GuacOpenShiftAccess:
                                     {
                                         "name": "XRDP_PASSWORD",
                                         "value": "%s" % (rdp_password),
-                                    }
+                                    },
+                                    {
+                                        "name": "USERNAME",
+                                        "value": "%s" % (username),
+                                    },
                                 ],
                                 "image": "gdesk:latest",
                                 "imagePullPolicy": "Always",
@@ -171,7 +175,7 @@ class GuacOpenShiftAccess:
 
         return body
 
-    def _create_desktop_dc(self, desktop_name, rdp_password):
+    def _create_desktop_dc(self, username, desktop_name, rdp_password):
 
         try:
 
@@ -210,7 +214,7 @@ class GuacOpenShiftAccess:
         service_name = "desktop-%s" % (username)
         desktop_name = "desktop-%s" % (username)
 
-        dc_msg = self._create_desktop_dc(desktop_name, rdp_password)
+        dc_msg = self._create_desktop_dc(username, desktop_name, rdp_password)
         svc_msg = self._create_desktop_svc(service_name, desktop_name)
 
         return dc_msg, svc_msg
