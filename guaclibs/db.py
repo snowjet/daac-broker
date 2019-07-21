@@ -14,7 +14,7 @@ logger = log.get_logger()
 class GuacDatabaseAccess:
     def __init__(self):
 
-        print("Database Connecting")
+        logger.info("Database Connecting")
 
         # Ensure Postgres db is connectable
         if os.environ.get("POSTGRES_HOST"):
@@ -25,11 +25,13 @@ class GuacDatabaseAccess:
         if os.environ.get("POSTGRES_USER"):
             POSTGRES_USER = os.environ["POSTGRES_USER"]
         else:
+            logger.error("OS environment variable: POSTGRES_USER not defined")
             sys.exit(255)
 
         if os.environ.get("POSTGRES_PASSWORD"):
             POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
         else:
+            logger.error("OS environment variable: POSTGRES_PASSWORD not defined")
             sys.exit(255)
 
         if os.environ.get("POSTGRES_DATABASE"):
@@ -51,10 +53,10 @@ class GuacDatabaseAccess:
         )
 
         self.db_conn = psycopg2.connect(conn_string)
+        self.db_conn.autocommit = True
 
     def disconnect(self):
 
-        self.db_conn.commit()
         self.db_conn.close()
 
     def test(self):
@@ -87,9 +89,6 @@ class GuacDatabaseAccess:
         )
         entity_id = cursor.fetchone()
 
-        # Make the changes to the database persistent
-        self.db_conn.commit()
-
         # Close communication with the database
         cursor.close()
 
@@ -104,9 +103,6 @@ class GuacDatabaseAccess:
             (hostname,),
         )
         connection_id = cursor.fetchone()
-
-        # Make the changes to the database persistent
-        self.db_conn.commit()
 
         # Close communication with the database
         cursor.close()
@@ -163,9 +159,6 @@ class GuacDatabaseAccess:
                 username, entity_id[0]
             )
             print(msg)
-
-        # Make the changes to the database persistent
-        self.db_conn.commit()
 
         # Close communication with the database
         cursor.close()
@@ -243,9 +236,6 @@ class GuacDatabaseAccess:
                 (password, connection_id[0]),
             )
 
-        # Make the changes to the database persistent
-        self.db_conn.commit()
-
         # Close communication with the database
         cursor.close()
 
@@ -294,9 +284,6 @@ class GuacDatabaseAccess:
                 (password, connection_id[0]),
             )
 
-        # Make the changes to the database persistent
-        self.db_conn.commit()
-
         # Close communication with the database
         cursor.close()
 
@@ -323,9 +310,6 @@ class GuacDatabaseAccess:
             )
         else:
             print("Connection map already exists")
-
-        # Make the changes to the database persistent
-        self.db_conn.commit()
 
         # Close communication with the database
         cursor.close()

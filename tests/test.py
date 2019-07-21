@@ -5,7 +5,7 @@ import sys
 sys.path.append("..")
 
 from guaclibs.db import GuacDatabaseAccess
-from guaclibs.oc import GuacOC
+from guaclibs.oc import GuacOpenShiftAccess
 
 
 def main():

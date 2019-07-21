@@ -3,7 +3,14 @@ from pydantic import BaseModel
 
 from guaclibs.security import generate_password
 from guaclibs.db import GuacDatabaseAccess
-from guaclibs.oc import GuacOC
+from guaclibs.oc import GuacOpenShiftAccess
+from guaclibs.log import daac_logging
+
+log = daac_logging()
+logger = log.get_logger()
+
+guacdb = GuacDatabaseAccess()
+guacoc = GuacOpenShiftAccess()
 
 app = FastAPI()
 
@@ -20,7 +27,6 @@ def read_root():
 @app.get("/users/")
 def get_all_users():
 
-    guacdb = GuacDatabaseAccess()
     msg = guacdb.test()
 
     return {"users:", msg}
@@ -29,7 +35,6 @@ def get_all_users():
 @app.get("/users/{username}")
 def get_users(username: str):
 
-    guacdb = GuacDatabaseAccess()
     msg = guacdb.test()
 
     return {"users": msg}
@@ -38,8 +43,7 @@ def get_users(username: str):
 @app.get("/projects")
 def get_projects():
 
-    myoc = GuacOC()
-    project_list = myoc.list_projects()
+    project_list = guacoc.list_projects()
 
     return {"projects:", project_list}
 
@@ -47,17 +51,13 @@ def get_projects():
 @app.get("/services")
 def get_services():
 
-    myoc = GuacOC()
-    service_list = myoc.list_services()
+    service_list = guacoc.list_services()
 
     return {"services:", service_list}
 
 
 @app.put("/add-user/{username}")
 def add_user(username: str, dcaas_params: DCaaS_Params):
-
-    guacdb = GuacDatabaseAccess()
-    myoc = GuacOC()
 
     hostname = f"desktop-{username}"
     password = dcaas_params.password
@@ -68,6 +68,8 @@ def add_user(username: str, dcaas_params: DCaaS_Params):
     guacdb.create_connection(username, hostname, password=rdp_password)
     guacdb.join_connection_to_user(username, hostname)
 
-    myoc.create_user_daac(username, rdp_password)
+    dc_msg, svc_msg = guacoc.create_user_daac(username, rdp_password)
+
+    logger.info("Attempted to create user", user=username, dc=dc_msg, svc=svc_msg)
 
     return {"user-added": username}
