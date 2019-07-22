@@ -134,15 +134,13 @@ class GuacDatabaseAccess:
         password_hash = hashlib.sha256(
             "".join((password, salt_hash_upper)).encode("UTF-8")
         ).hexdigest()
-        print(salt_hash_upper)
-        print(password_hash)
+        logger.debug("Salt Hash", salt_hash_upper=salt_hash_upper)
+        logger.debug("Password Hash", password_hash=password_hash)
 
         entity_id = self._get_user_identity(username)
         if entity_id is None:
-            msg = "Did not receive entity id for user: {0} - adding user".format(
-                username
-            )
-            print(msg)
+ 
+            logger.info("Did not receive entity id for user, adding user", username=username)
 
             # add user to entity table
             cursor.execute(
@@ -169,10 +167,7 @@ class GuacDatabaseAccess:
             )
 
         else:
-            msg = "Retrieved entity id for user: {0} id: {1}".format(
-                username, entity_id[0]
-            )
-            print(msg)
+            logger.info("Retrieved entity id for user", username=username)
 
         # Close communication with the database
         cursor.close()
@@ -193,8 +188,7 @@ class GuacDatabaseAccess:
         connection_id = cursor.fetchone()
 
         if connection_id is None:
-            msg = "Adding new connection by name: {0}".format(con_name)
-            print(msg)
+            logger.info("Adding new connection", name=con_name)
 
             cursor.execute(
                 "INSERT INTO guacamole_connection (connection_name, protocol) VALUES (%s, %s);",
@@ -226,31 +220,8 @@ class GuacDatabaseAccess:
                 (connection_id[0], password),
             )
         else:
-            msg = "Connection ID already exists for {0} id is:{1}".format(
-                con_name, connection_id[0]
-            )
-            print(msg)
-
-            print("Updating connection params")
-            # Update entry
-            cursor.execute(
-                "UPDATE guacamole_connection_parameter SET parameter_value=%s WHERE connection_id=%s AND parameter_name='hostname';",
-                (hostname, connection_id[0]),
-            )
-            cursor.execute(
-                "UPDATE guacamole_connection_parameter SET parameter_value=%s WHERE connection_id=%s AND parameter_name='port';",
-                (port, connection_id[0]),
-            )
-            cursor.execute(
-                "UPDATE guacamole_connection_parameter SET parameter_value=%s WHERE connection_id=%s AND parameter_name='username';",
-                (username, connection_id[0]),
-            )
-            cursor.execute(
-                "UPDATE guacamole_connection_parameter SET parameter_value=%s WHERE connection_id=%s AND parameter_name='password';",
-                (password, connection_id[0]),
-            )
-
-        # Close communication with the database
+            logger.error("Connection ID already exists - use update", name=con_name, conneciton_id=connection_id[0])
+       
         cursor.close()
 
         return True
@@ -269,17 +240,14 @@ class GuacDatabaseAccess:
         connection_id = cursor.fetchone()
 
         if connection_id is None:
-            logger.info(
-                "Cannot update connection as it doesn't exist:",
+            logger.error(
+                "Cannot update connection as it doesn't exist - use create",
                 connection_name=con_name,
             )
         else:
-            msg = "Connection ID already exists for {0} id is:{1}".format(
-                con_name, connection_id[0]
-            )
-            print(msg)
+            logger.info("Connection ID already exists", name=con_name, conneciton_id=connection_id[0])
 
-            print("Updating connection params")
+            logger.info("Updating connection params")
             # Update entry
             cursor.execute(
                 "UPDATE guacamole_connection_parameter SET parameter_value=%s WHERE connection_id=%s AND parameter_name='hostname';",
@@ -323,7 +291,7 @@ class GuacDatabaseAccess:
                 (entity_id, connection_id),
             )
         else:
-            print("Connection map already exists")
+            log.error("Connection map already exists")
 
         # Close communication with the database
         cursor.close()
