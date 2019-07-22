@@ -128,10 +128,7 @@ class GuacOpenShiftAccess:
                                         "name": "XRDP_PASSWORD",
                                         "value": "%s" % (rdp_password),
                                     },
-                                    {
-                                        "name": "USERNAME",
-                                        "value": "%s" % (username),
-                                    },
+                                    {"name": "USERNAME", "value": "%s" % (username)},
                                 ],
                                 "image": "gdesk:latest",
                                 "imagePullPolicy": "Always",

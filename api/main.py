@@ -27,6 +27,7 @@ def read_root():
 @app.get("/users/")
 def get_all_users():
 
+    guacdb.confirm_db_connection()
     msg = guacdb.test()
 
     return {"users:", msg}
@@ -35,6 +36,7 @@ def get_all_users():
 @app.get("/users/{username}")
 def get_users(username: str):
 
+    guacdb.confirm_db_connection()
     msg = guacdb.test()
 
     return {"users": msg}
@@ -64,6 +66,7 @@ def add_user(username: str, dcaas_params: DCaaS_Params):
 
     rdp_password = generate_password()
 
+    guacdb.confirm_db_connection()
     guacdb.add_user(username, password)
     guacdb.create_connection(username, hostname, password=rdp_password)
     guacdb.join_connection_to_user(username, hostname)

@@ -16,6 +16,10 @@ class GuacDatabaseAccess:
 
         logger.info("Database Connecting")
 
+        self._connect_to_db()
+
+    def _connect_to_db(self):
+
         # Ensure Postgres db is connectable
         if os.environ.get("POSTGRES_HOST"):
             POSTGRES_HOST = os.environ["POSTGRES_HOST"]
@@ -54,6 +58,13 @@ class GuacDatabaseAccess:
 
         self.db_conn = psycopg2.connect(conn_string)
         self.db_conn.autocommit = True
+
+    def confirm_db_connection(self):
+
+        logger.debug("checking if db is connected")
+        if not self.db_conn.get_transaction_status():
+            logger.info("DB is not connected - reconnecting")
+            self._connect_to_db()
 
     def disconnect(self):
 
@@ -333,11 +344,11 @@ class GuacDatabaseAccess:
         table_exists = cursor.fetchall()
 
         if not table_exists[0][0]:
-            print("Schema Not Found")
+            logger.info("Schema Not Found")
             db_schema = os.path.join(os.path.dirname(__file__), "db_schema/initdb.sql")
             sql_file = open(db_schema, "r")
             cursor.execute(sql_file.read())
         else:
-            print("tables already has a schema")
+            logger.info("tables already has a schema")
 
         return True
