@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from guaclibs.security import generate_password
+from guaclibs.security import generate_password, hash_password
 from guaclibs.db import GuacDatabaseAccess
 from guaclibs.oc import GuacOpenShiftAccess
 from guaclibs.log import daac_logging
@@ -65,13 +65,14 @@ def add_user(username: str, dcaas_params: DCaaS_Params):
     password = dcaas_params.password
 
     rdp_password = generate_password()
+    password_hash = hash_password(password=rdp_password)
 
     guacdb.confirm_db_connection()
     guacdb.add_user(username, password)
     guacdb.create_connection(username, hostname, password=rdp_password)
     guacdb.join_connection_to_user(username, hostname)
 
-    dc_msg, svc_msg = guacoc.create_user_daac(username, rdp_password)
+    dc_msg, svc_msg = guacoc.create_user_daac(username, password_hash)
 
     logger.info("Attempted to create user", user=username, dc=dc_msg, svc=svc_msg)
 
