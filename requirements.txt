@@ -1,6 +1,10 @@
 openshift
+pyjwt
 psycopg2-binary
 uvicorn
 fastapi
 daiquiri
 passgen
+passlib
+bcrypt
+python-multipart

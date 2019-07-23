@@ -2,7 +2,11 @@ import passgen
 import hashlib
 import binascii
 import os
+import secrets
 
+def generate_session_secret(num_bytes=32):
+    """Generate a 32 hex string"""
+    return secrets.token_hex(num_bytes)
 
 def generate_password():
     """Generate a password."""
