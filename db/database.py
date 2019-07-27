@@ -1,11 +1,12 @@
 import hashlib
 import os
-import sys
 import uuid
 
 import psycopg2
 
-from guaclibs.log import daac_logging
+from core.log import daac_logging
+from core.config import DATABASE_URL, MAX_CONNECTIONS_COUNT, MIN_CONNECTIONS_COUNT
+
 
 log = daac_logging()
 logger = log.get_logger()
@@ -21,43 +22,10 @@ class GuacDatabaseAccess:
     def _connect_to_db(self):
 
         # Ensure Postgres db is connectable
-        if os.environ.get("POSTGRES_HOST"):
-            POSTGRES_HOST = os.environ["POSTGRES_HOST"]
-        else:
-            POSTGRES_HOST = "postgres"
-
-        if os.environ.get("POSTGRES_USER"):
-            POSTGRES_USER = os.environ["POSTGRES_USER"]
-        else:
-            logger.error("OS environment variable: POSTGRES_USER not defined")
-            sys.exit(255)
-
-        if os.environ.get("POSTGRES_PASSWORD"):
-            POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
-        else:
-            logger.error("OS environment variable: POSTGRES_PASSWORD not defined")
-            sys.exit(255)
-
-        if os.environ.get("POSTGRES_DATABASE"):
-            POSTGRES_DATABASE = os.environ["POSTGRES_DATABASE"]
-        else:
-            POSTGRES_DATABASE = "guacamole_db"
-
-        conn_string = (
-            "host="
-            + POSTGRES_HOST
-            + " port="
-            + "5432"
-            + " dbname="
-            + POSTGRES_DATABASE
-            + " user="
-            + POSTGRES_USER
-            + " password="
-            + POSTGRES_PASSWORD
-        )
-
-        self.db_conn = psycopg2.connect(conn_string)
+        self.db_conn = psycopg2.connect(DATABASE_URL)
         self.db_conn.autocommit = True
+        
+        logger.info("DB connected")
 
     def confirm_db_connection(self):
 
@@ -71,7 +39,11 @@ class GuacDatabaseAccess:
 
     def disconnect(self):
 
+        logger.info("Closing DB connection")
+
         self.db_conn.close()
+
+        logger.info("Closed DB connection")
 
     def test(self):
 

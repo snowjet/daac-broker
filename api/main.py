@@ -9,10 +9,10 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from guaclibs.security import generate_password, hash_password, generate_session_secret
-from guaclibs.db import GuacDatabaseAccess
-from guaclibs.oc import GuacOpenShiftAccess
-from guaclibs.log import daac_logging
+from core.security import generate_password, hash_password, generate_session_secret
+from db.database import GuacDatabaseAccess
+from oc.OpenShiftClient import GuacOpenShiftAccess
+from core.log import daac_logging
 
 log = daac_logging()
 logger = log.get_logger()
@@ -138,84 +138,9 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/users/me/", response_model=User)
-async def read_users_me(current_user: User = Depends(get_current_active_user)):
-    return current_user
-
-
-@app.get("/users/me/items/")
-async def read_own_items(current_user: User = Depends(get_current_active_user)):
-    return [{"item_id": "Foo", "owner": current_user.username}]
-
-
-
 class DCaaS_Params(BaseModel):
     password: str
 
 @app.get("/")
 async def read_root(token: str = Depends(oauth2_scheme)):
     return {"Message": "Guac API Broker - connect to /docs for an API breakdown", "token": token}
-
-
-@app.get("/users/")
-def get_all_users():
-
-    guacdb.confirm_db_connection()
-    msg = guacdb.test()
-
-    return {"users:", msg}
-
-
-@app.get("/users/{username}")
-def get_users(username: str):
-
-    guacdb.confirm_db_connection()
-    msg = guacdb.test()
-
-    return {"users": msg}
-
-
-@app.get("/projects")
-def get_projects():
-
-    project_list = guacoc.list_projects()
-
-    return {"projects:", project_list}
-
-
-@app.get("/services")
-def get_services():
-
-    service_list = guacoc.list_services()
-
-    return {"services:", service_list}
-
-
-@app.put("/add-user/{username}")
-def add_user(username: str, dcaas_params: DCaaS_Params):
-
-    hostname = f"desktop-{username}"
-    password = dcaas_params.password
-
-    rdp_password = generate_password()
-    password_hash = hash_password(password=rdp_password)
-
-    guacdb.confirm_db_connection()
-    guacdb.add_user(username, password)
-    guacdb.create_connection(username, hostname, password=rdp_password)
-    guacdb.join_connection_to_user(username, hostname)
-
-    dc_msg, svc_msg = guacoc.create_user_daac(username, password_hash)
-
-    logger.info("Attempted to create user", user=username, dc=dc_msg, svc=svc_msg)
-
-    return {"user-added": username}
-
-# Admin Functions
-@app.put("/admin/prepare-db")
-def prepare_db():
-
-    guacdb.confirm_db_connection()
-    msg = guacdb.load_schmea_safe()
-
-    return {"prepare-db": msg}

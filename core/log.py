@@ -1,12 +1,10 @@
 import logging
 import daiquiri
-import os
 
+from core.config import LOG_LEVEL
 
 class daac_logging:
     def __init__(self):
-
-        LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
 
         daiquiri.setup(level=LOG_LEVEL)
         self.logger = daiquiri.getLogger(__name__)
@@ -14,3 +12,7 @@ class daac_logging:
     def get_logger(self):
 
         return self.logger
+
+
+daiquiri.setup(level=LOG_LEVEL)
+logger = daiquiri.getLogger(__name__)
