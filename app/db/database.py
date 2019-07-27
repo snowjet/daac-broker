@@ -4,8 +4,8 @@ import uuid
 
 import psycopg2
 
-from core.log import daac_logging
-from core.config import DATABASE_URL, MAX_CONNECTIONS_COUNT, MIN_CONNECTIONS_COUNT
+from app.core.log import daac_logging
+from app.core.config import DATABASE_URL, MAX_CONNECTIONS_COUNT, MIN_CONNECTIONS_COUNT
 
 
 log = daac_logging()

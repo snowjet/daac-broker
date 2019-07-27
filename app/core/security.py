@@ -4,7 +4,7 @@ import binascii
 import os
 import secrets
 
-from core.log import logger
+from app.core.log import logger
 
 def generate_session_secret(num_bytes=32):
     """Generate a 32 hex string"""
