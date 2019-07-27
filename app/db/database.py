@@ -4,12 +4,8 @@ import uuid
 
 import psycopg2
 
-from app.core.log import daac_logging
+from app.core.log import logger
 from app.core.config import DATABASE_URL, MAX_CONNECTIONS_COUNT, MIN_CONNECTIONS_COUNT
-
-
-log = daac_logging()
-logger = log.get_logger()
 
 
 class GuacDatabaseAccess:
