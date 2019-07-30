@@ -39,7 +39,11 @@ def get_user():
 
 
 @router.put("/admin/add-user/{username}")
-def add_user(username: str, user_creds: UserCreds, current_user: User = Depends(is_current_user_admin)):
+def add_user(
+    username: str,
+    user_creds: UserCreds,
+    current_user: User = Depends(is_current_user_admin),
+):
 
     hostname = f"desktop-{username}"
     password = user_creds.password

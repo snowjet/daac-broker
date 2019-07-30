@@ -8,6 +8,7 @@ logger.info("Get DB instance")
 db = DataBase()
 db_conn = db.connect()
 
+
 def get_database_connection():
     # Read-only integer attribute:
     # 0 if the connection is open
