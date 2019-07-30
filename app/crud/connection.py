@@ -1,93 +1,13 @@
-from asyncpg import Connection
-from pydantic import EmailStr
+from app.core.log import logger
+from app.crud.user import get_user_identity
+from app.db.db_utils import get_database_connection
 
-from app.models.user import UserInCreate, UserInDB, UserInUpdate
-
-
-async def get_user(conn: Connection, username: str) -> UserInDB:
-    row = await conn.fetchrow(
-        """
-        SELECT id, username, email, salt, hashed_password, bio, image, created_at, updated_at
-        FROM users
-        WHERE username = $1
-        """,
-        username,
-    )
-    if row:
-        return UserInDB(**row)
+db_conn = get_database_connection()
 
 
-async def get_user_by_email(conn: Connection, email: EmailStr) -> UserInDB:
-    row = await conn.fetchrow(
-        """
-        SELECT id, username, email, salt, hashed_password, bio, image, created_at, updated_at
-        FROM users
-        WHERE email = $1
-        """,
-        email,
-    )
-    if row:
-        return UserInDB(**row)
+def get_connection_id(hostname):
 
-
-async def create_user(conn: Connection, user: UserInCreate) -> UserInDB:
-    dbuser = UserInDB(**user.dict())
-    dbuser.change_password(user.password)
-
-    row = await conn.fetchrow(
-        """
-        INSERT INTO users (username, email, salt, hashed_password, bio, image) 
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id, created_at, updated_at
-        """,
-        dbuser.username,
-        dbuser.email,
-        dbuser.salt,
-        dbuser.hashed_password,
-        dbuser.bio,
-        dbuser.image,
-    )
-
-    dbuser.id = row["id"]
-    dbuser.created_at = row["created_at"]
-    dbuser.updated_at = row["updated_at"]
-
-    return dbuser
-
-
-async def update_user(conn: Connection, username: str, user: UserInUpdate) -> UserInDB:
-    dbuser = await get_user(conn, username)
-
-    dbuser.username = user.username or dbuser.username
-    dbuser.email = user.email or dbuser.email
-    dbuser.bio = user.bio or dbuser.bio
-    dbuser.image = user.image or dbuser.image
-    if user.password:
-        dbuser.change_password(user.password)
-
-    updated_at = await conn.fetchval(
-        """
-        UPDATE users
-        SET username = $1, email = $2, salt = $3, hashed_password = $4, bio = $5, image = $6
-        WHERE username = $7
-        RETURNING updated_at
-        """,
-        dbuser.username,
-        dbuser.email,
-        dbuser.salt,
-        dbuser.hashed_password,
-        dbuser.bio,
-        dbuser.image,
-        username,
-    )
-
-    dbuser.updated_at = updated_at
-    return dbuser
-    
-
-def _get_connection_id(self, hostname):
-
-    cursor = self.db_conn.cursor()
+    cursor = db_conn.cursor()
 
     cursor.execute(
         "SELECT connection_id from guacamole_connection where connection_name=%s;",
@@ -101,11 +21,11 @@ def _get_connection_id(self, hostname):
     return connection_id
 
 
-def create_connection(self, username, hostname, password, protocol="rdp", port="3389"):
+def create_connection(username, hostname, password, protocol="rdp", port="3389"):
     con_name = hostname
-    cursor = self.db_conn.cursor()
+    cursor = db_conn.cursor()
 
-    # Need to check if the hostname already exists - then we are just udpdating - Determine the connection_id
+    # Need to check if the hostname already exists - then we are just updating - Determine the connection_id
     cursor.execute(
         "SELECT connection_id FROM guacamole_connection WHERE connection_name = %s AND parent_id IS NULL;",
         (hostname,),
@@ -156,9 +76,9 @@ def create_connection(self, username, hostname, password, protocol="rdp", port="
     return True
 
 
-def update_connection(self, username, hostname, password, protocol="rdp", port="3389"):
+def update_connection(username, hostname, password, protocol="rdp", port="3389"):
     con_name = hostname
-    cursor = self.db_conn.cursor()
+    cursor = db_conn.cursor()
 
     # Need to check if the hostname already exists - then we are just udpdating - Determine the connection_id
     cursor.execute(
@@ -204,12 +124,12 @@ def update_connection(self, username, hostname, password, protocol="rdp", port="
     return True
 
 
-def join_connection_to_user(self, username, hostname):
+def join_connection_to_user(username, hostname):
 
-    cursor = self.db_conn.cursor()
+    cursor = db_conn.cursor()
 
-    entity_id = self._get_user_identity(username)
-    connection_id = self._get_connection_id(hostname)
+    entity_id = get_user_identity(username)
+    connection_id = get_connection_id(hostname)
 
     cursor.execute(
         "SELECT entity_id from guacamole_connection_permission where entity_id=%s AND connection_id=%s;",
@@ -224,7 +144,7 @@ def join_connection_to_user(self, username, hostname):
             (entity_id, connection_id),
         )
     else:
-        log.error("Connection map already exists")
+        logger.error("Connection map already exists")
 
     # Close communication with the database
     cursor.close()

@@ -21,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_event_handler("startup", db.confirm_db_connection)
+app.add_event_handler("startup", db.connect)
 app.add_event_handler("shutdown", db.disconnect)
 
 app.add_exception_handler(HTTPException, http_error_handler)

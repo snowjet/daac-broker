@@ -34,7 +34,16 @@ fake_users_db = {
         "email": "user@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "disabled": False,
-    }
+        "role": "user",
+    },
+    "admin": {
+        "username": "admin",
+        "full_name": "John Doe",
+        "email": "admin@example.com",
+        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
+        "disabled": False,
+        "role": "admin",
+    },
 }
 
 
@@ -84,6 +93,18 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+
+async def is_current_user_admin(current_user: User = Depends(get_current_user)):
+    logger.info("checking if user is admin")
+
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    if current_user.role.lower() != "admin":
+        raise HTTPException(status_code=400, detail="Not an admin")
+
+    logger.debug("User has role admin", user=current_user.username)
     return current_user
 
 

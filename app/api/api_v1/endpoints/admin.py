@@ -1,46 +1,57 @@
+from fastapi import APIRouter, Depends
 
+from app.core.log import logger
+from app.core.jwt import get_current_active_user, is_current_user_admin
+from app.core.security import generate_password, hash_password
+
+from app.crud.user import add_user_to_db
+from app.crud.connection import create_connection, join_connection_to_user
+from app.crud.openshift import create_user_daac
+
+from app.models.user import User, UserCreds
+from app.db.db_utils import load_schema_safe
+
+
+router = APIRouter()
 
 # Admin Functions
 @router.put("/admin/prepare-db")
-def prepare_db():
+async def prepare_db(current_user: User = Depends(is_current_user_admin)):
 
-    guacdb.confirm_db_connection()
-    msg = guacdb.load_schmea_safe()
+    msg = load_schema_safe()
 
     return {"prepare-db": msg}
 
 
 @router.get("admin/list-users/")
-def get_all_users():
+def list_users():
 
-    guacdb.confirm_db_connection()
-    msg = guacdb.test()
+    msg = "tst"
+    return {"users:", msg}
+
+
+@router.get("/admin/get-user/{username}")
+def get_user():
+
+    msg = "tst"
 
     return {"users:", msg}
 
-@router.get("admin/get-user/{username}")
-def get_all_users():
-
-    guacdb.confirm_db_connection()
-    msg = guacdb.test()
-
-    return {"users:", msg}
 
 @router.put("/admin/add-user/{username}")
-def add_user(username: str, dcaas_params: DCaaS_Params):
+def add_user(username: str, user_creds: UserCreds, current_user: User = Depends(is_current_user_admin)):
 
     hostname = f"desktop-{username}"
-    password = dcaas_params.password
+    password = user_creds.password
 
     rdp_password = generate_password()
     password_hash = hash_password(password=rdp_password)
 
-    guacdb.confirm_db_connection()
-    guacdb.add_user(username, password)
-    guacdb.create_connection(username, hostname, password=rdp_password)
-    guacdb.join_connection_to_user(username, hostname)
+    add_user_to_db(username, password)
+    create_connection(username, hostname, password=rdp_password)
+    join_connection_to_user(username, hostname)
 
-    dc_msg, svc_msg = guacoc.create_user_daac(username, password_hash)
+    dc_msg, svc_msg = create_user_daac(username, password_hash)
 
     logger.info("Attempted to create user", user=username, dc=dc_msg, svc=svc_msg)
 

@@ -8,6 +8,12 @@ class User(RWModel):
     email: Optional[str] = None
     full_name: Optional[str] = None
     disabled: bool = None
+    role: None
+
+
+class UserCreds(RWModel):
+    username: str
+    password: str = None
 
 
 class UserInDB(User):
