@@ -8,7 +8,6 @@ logger.info("Get DB instance")
 db = DataBase()
 db_conn = db.connect()
 
-
 def get_database_connection():
     # Read-only integer attribute:
     # 0 if the connection is open
@@ -23,7 +22,7 @@ def get_database_connection():
     return db_conn
 
 
-def disconnect():
+def disconnect_from_database():
     logger.info("Closing DB connection")
     db_conn.close()
     logger.info("Closed DB connection")
