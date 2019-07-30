@@ -3,6 +3,7 @@ import daiquiri
 
 from app.core.config import LOG_LEVEL
 
+
 class daac_logging:
     def __init__(self):
 

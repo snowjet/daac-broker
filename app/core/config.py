@@ -10,7 +10,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # one week
 
 load_dotenv(".env")
 
-LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 
@@ -21,9 +21,7 @@ if not DATABASE_URL:
     POSTGRES_PASS = os.getenv("POSTGRES_PASSWORD", "postgres")
     POSTGRES_NAME = os.getenv("POSTGRES_DB", "guacamole_db")
 
-    DATABASE_URL = (
-        f"host={POSTGRES_HOST} port={POSTGRES_PORT} dbname={POSTGRES_NAME} user={POSTGRES_USER} password={POSTGRES_PASS}"
-    )
+    DATABASE_URL = f"host={POSTGRES_HOST} port={POSTGRES_PORT} dbname={POSTGRES_NAME} user={POSTGRES_USER} password={POSTGRES_PASS}"
 
 # Placeholder for connection pooling
 MAX_CONNECTIONS_COUNT = int(os.getenv("MAX_CONNECTIONS_COUNT", 10))

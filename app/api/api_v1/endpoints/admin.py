@@ -1,6 +1,32 @@
 
 
-@app.put("/admin/add-user/{username}")
+# Admin Functions
+@router.put("/admin/prepare-db")
+def prepare_db():
+
+    guacdb.confirm_db_connection()
+    msg = guacdb.load_schmea_safe()
+
+    return {"prepare-db": msg}
+
+
+@router.get("admin/list-users/")
+def get_all_users():
+
+    guacdb.confirm_db_connection()
+    msg = guacdb.test()
+
+    return {"users:", msg}
+
+@router.get("admin/get-user/{username}")
+def get_all_users():
+
+    guacdb.confirm_db_connection()
+    msg = guacdb.test()
+
+    return {"users:", msg}
+
+@router.put("/admin/add-user/{username}")
 def add_user(username: str, dcaas_params: DCaaS_Params):
 
     hostname = f"desktop-{username}"
@@ -19,12 +45,3 @@ def add_user(username: str, dcaas_params: DCaaS_Params):
     logger.info("Attempted to create user", user=username, dc=dc_msg, svc=svc_msg)
 
     return {"user-added": username}
-
-# Admin Functions
-@app.put("/admin/prepare-db")
-def prepare_db():
-
-    guacdb.confirm_db_connection()
-    msg = guacdb.load_schmea_safe()
-
-    return {"prepare-db": msg}

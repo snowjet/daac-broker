@@ -9,16 +9,11 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from core.security import generate_password, hash_password, generate_session_secret
-from db.database import GuacDatabaseAccess
-from oc.OpenShiftClient import GuacOpenShiftAccess
-from core.log import daac_logging
+from app.core.security import generate_password, hash_password, generate_session_secret
+from app.db.db_utils import db
+from app.oc.OpenShiftClient import GuacOpenShiftAccess
+from app.core.log import logger
 
-log = daac_logging()
-logger = log.get_logger()
-
-#guacdb = GuacDatabaseAccess()
-#guacoc = GuacOpenShiftAccess()
 
 SECRET_KEY = generate_session_secret(32)
 ALGORITHM = "HS256"
@@ -61,6 +56,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 app = FastAPI()
+
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -141,6 +137,10 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 class DCaaS_Params(BaseModel):
     password: str
 
+
 @app.get("/")
 async def read_root(token: str = Depends(oauth2_scheme)):
-    return {"Message": "Guac API Broker - connect to /docs for an API breakdown", "token": token}
+    return {
+        "Message": "Guac API Broker - connect to /docs for an API breakdown",
+        "token": token,
+    }
