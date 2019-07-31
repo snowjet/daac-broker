@@ -3,10 +3,10 @@ from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
-from app.api.api_v1.api import router as api_router
-from app.core.config import ALLOWED_HOSTS, API_V1_STR, PROJECT_NAME
-from app.core.errors import http_422_error_handler, http_error_handler
-from app.db.db_utils import get_database_connection, disconnect_from_database
+from api.api_v1.api import router as api_router
+from core.config import ALLOWED_HOSTS, API_V1_STR, PROJECT_NAME
+from core.errors import http_422_error_handler, http_error_handler
+from db.db_utils import disconnect_from_database, get_database_connection
 
 app = FastAPI(title=PROJECT_NAME)
 

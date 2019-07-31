@@ -1,16 +1,13 @@
 from fastapi import APIRouter, Depends
 
-from app.core.log import logger
-from app.core.jwt import get_current_active_user, is_current_user_admin
-from app.core.security import generate_password, hash_password
-
-from app.crud.user import add_user_to_db
-from app.crud.connection import create_connection, join_connection_to_user
-from app.crud.openshift import create_user_daac
-
-from app.models.user import User, UserCreds
-from app.db.db_utils import load_schema_safe
-
+from core.jwt import get_current_active_user, is_current_user_admin
+from core.log import logger
+from core.security import generate_password, hash_password
+from crud.connection import create_connection, join_connection_to_user
+from crud.openshift import create_user_daac
+from crud.user import add_user_to_db
+from db.db_utils import load_schema_safe
+from models.user import User, UserCreds
 
 router = APIRouter()
 
@@ -23,7 +20,7 @@ async def prepare_db(current_user: User = Depends(is_current_user_admin)):
     return {"prepare-db": msg}
 
 
-@router.get("admin/list-users/")
+@router.get("/admin/list-users/")
 def list_users():
 
     msg = "tst"

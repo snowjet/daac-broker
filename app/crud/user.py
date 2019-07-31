@@ -1,8 +1,8 @@
-import uuid
 import hashlib
+import uuid
 
-from app.core.log import logger
-from app.db.db_utils import get_database_connection
+from core.log import logger
+from db.db_utils import get_database_connection
 
 db_conn = get_database_connection()
 
@@ -24,7 +24,7 @@ def get_user_id(entity_id):
     return user_id
 
 
-def get_user_identity_id(username):
+def get_user_entity_id(username):
 
     cursor = db_conn.cursor()
 
@@ -52,7 +52,7 @@ def add_user_to_db(username, password):
     logger.debug("Salt Hash", salt_hash_upper=salt_hash_upper)
     logger.debug("Password Hash", password_hash=password_hash)
 
-    entity_id = get_user_identity_id(username)
+    entity_id = get_user_entity_id(username)
     if entity_id is None:
 
         logger.info(
@@ -64,7 +64,7 @@ def add_user_to_db(username, password):
             "INSERT INTO guacamole_entity (name, type) VALUES (%s, 'USER');",
             (username,),
         )
-        entity_id = get_user_identity_id(username)
+        entity_id = get_user_entity_id(username)
 
         cursor.execute(
             "INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date) \

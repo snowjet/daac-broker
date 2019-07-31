@@ -1,8 +1,8 @@
 import openshift
 
-from app.core.log import logger
-from app.oc.oc_utils import oc_conn
-from app.core.config import NAMESPACE
+from core.config import NAMESPACE
+from core.log import logger
+from oc.oc_utils import oc_conn
 
 
 def list_projects():

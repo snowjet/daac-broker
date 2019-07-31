@@ -3,7 +3,7 @@ import os
 from kubernetes import client, config
 from openshift.dynamic import DynamicClient
 
-from app.core.log import daac_logging
+from core.log import daac_logging
 
 log = daac_logging()
 logger = log.get_logger()

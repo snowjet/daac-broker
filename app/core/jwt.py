@@ -5,18 +5,15 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt import PyJWTError
 from passlib.context import CryptContext
-
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from app.db.db_utils import db
-from app.oc.OpenShiftClient import GuacOpenShiftAccess
-from app.core.log import logger
-from app.core.config import JWT_TOKEN_PREFIX
-from app.core.security import generate_password, hash_password, generate_session_secret
-
-from app.models.token import Token, TokenData
-from app.models.user import User, UserInDB
-
+from core.config import JWT_TOKEN_PREFIX
+from core.log import logger
+from core.security import (generate_password, generate_session_secret,
+                           hash_password)
+from db.db_utils import db
+from models.token import Token, TokenData
+from models.user import User, UserInDB
 
 SECRET_KEY = generate_session_secret(32)
 ALGORITHM = "HS256"

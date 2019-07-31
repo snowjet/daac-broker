@@ -2,12 +2,11 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-
 from starlette.exceptions import HTTPException
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
-from app.core.jwt import Token, create_access_token, authenticate_user
+from core.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from core.jwt import Token, authenticate_user, create_access_token
 
 router = APIRouter()
 

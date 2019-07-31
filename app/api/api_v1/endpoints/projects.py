@@ -1,4 +1,4 @@
-@app.get("/projects")
+@router.get("/projects")
 def get_projects():
 
     project_list = guacoc.list_projects()

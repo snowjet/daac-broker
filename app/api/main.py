@@ -1,5 +1,5 @@
-from typing import Optional
 from datetime import datetime, timedelta
+from typing import Optional
 
 import jwt
 from fastapi import Depends, FastAPI, HTTPException
@@ -9,11 +9,11 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from app.core.security import generate_password, hash_password, generate_session_secret
-from app.db.db_utils import db
-from app.oc.OpenShiftClient import GuacOpenShiftAccess
-from app.core.log import logger
-
+from core.log import logger
+from core.security import (generate_password, generate_session_secret,
+                           hash_password)
+from db.db_utils import db
+from oc.OpenShiftClient import GuacOpenShiftAccess
 
 SECRET_KEY = generate_session_secret(32)
 ALGORITHM = "HS256"

@@ -1,10 +1,11 @@
-import passgen
-import hashlib
 import binascii
+import hashlib
 import os
 import secrets
 
-from app.core.log import logger
+import passgen
+
+from core.log import logger
 
 
 def generate_session_secret(num_bytes=32):

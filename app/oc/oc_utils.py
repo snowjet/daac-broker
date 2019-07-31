@@ -1,5 +1,5 @@
-from app.core.log import logger
-from app.oc.openshift import OpenShiftAccess
+from core.log import logger
+from oc.openshift import OpenShiftAccess
 
 logger.info("Get OpenShift Connection")
 oc = OpenShiftAccess()

@@ -1,14 +1,17 @@
 from typing import Optional
+
 from passlib.context import CryptContext
+
 from .rwmodel import RWModel
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class User(RWModel):
     username: str
     email: Optional[str] = None
     full_name: Optional[str] = None
     disabled: bool = None
-    role: None
+    role: str = None
 
 
 class UserCreds(RWModel):
@@ -17,7 +20,6 @@ class UserCreds(RWModel):
 
 
 class UserInDB(User):
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     hashed_password: str
 
     def verify_password(self, plain_password, hashed_password):

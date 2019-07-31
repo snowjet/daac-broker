@@ -1,6 +1,6 @@
-from app.core.log import logger
-from app.crud.user import get_user_identity
-from app.db.db_utils import get_database_connection
+from core.log import logger
+from crud.user import get_user_entity_id
+from db.db_utils import get_database_connection
 
 db_conn = get_database_connection()
 
@@ -128,7 +128,7 @@ def join_connection_to_user(username, hostname):
 
     cursor = db_conn.cursor()
 
-    entity_id = get_user_identity(username)
+    entity_id = get_user_entity_id(username)
     connection_id = get_connection_id(hostname)
 
     cursor.execute(

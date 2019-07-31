@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from app.core.jwt import get_current_active_user
-from app.models.user import User
+from core.jwt import get_current_active_user
+from models.user import User
 
 router = APIRouter()
 

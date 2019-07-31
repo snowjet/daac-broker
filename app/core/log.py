@@ -1,7 +1,8 @@
 import logging
+
 import daiquiri
 
-from app.core.config import LOG_LEVEL
+from core.config import LOG_LEVEL
 
 
 class daac_logging:
