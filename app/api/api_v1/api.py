@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from core.jwt import oauth2_scheme
 
 from .endpoints.admin import router as admin_router
 from .endpoints.auth import router as auth_router
@@ -15,8 +16,9 @@ router.include_router(auth_router)
 router.include_router(user_router)
 
 @router.get("/")
-def get_root():
-
-    msg = "tst"
-    return {"users:", msg}
+async def read_root(token: str = Depends(oauth2_scheme)):
+    return {
+        "Message": "Guac API Broker - connect to /docs for an API breakdown",
+        "token": token,
+    }
 

@@ -15,16 +15,17 @@ from db.db_utils import db
 from models.token import Token, TokenData
 from models.user import User, UserInDB
 
-SECRET_KEY = generate_session_secret(32)
+SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+# generate_session_secret(32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Use External Source for this. Currently temp lookup
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
 
-fake_users_db = {
+userDB = {
     "user": {
         "username": "user",
         "full_name": "John Doe",
@@ -45,7 +46,6 @@ fake_users_db = {
 
 
 def authenticate_user(username: str, password: str):
-    userDB = fake_users_db
     user = _get_user(userDB, username)
     if not user:
         return False
@@ -74,14 +74,17 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        logger.debug("Checking Payload")
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
+        logger.debug("Username being passed", username=username)
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
-    except PyJWTError:
+    except PyJWTError as error:
+        logger.error("JWT.get_current_user", error=error)
         raise credentials_exception
-    user = _get_user(username=token_data.username)
+    user = _get_user(userDB, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -115,5 +118,5 @@ def _get_password_hash(password):
 
 def _get_user(userDB, username: str):
     if username in userDB:
-        user_dict = db[username]
+        user_dict = userDB[username]
         return UserInDB(**user_dict)
