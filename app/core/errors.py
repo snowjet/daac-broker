@@ -1,8 +1,10 @@
 from collections.abc import Iterable
 
 from fastapi.openapi.constants import REF_PREFIX
-from fastapi.openapi.utils import (validation_error_definition,
-                                   validation_error_response_definition)
+from fastapi.openapi.utils import (
+    validation_error_definition,
+    validation_error_response_definition,
+)
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse

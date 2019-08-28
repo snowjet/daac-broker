@@ -9,8 +9,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 
 from core.config import JWT_TOKEN_PREFIX
 from core.log import logger
-from core.security import (generate_password, generate_session_secret,
-                           hash_password)
+from core.security import generate_password, generate_session_secret, hash_password
 from db.db_utils import db
 from models.token import Token, TokenData
 from models.user import User, UserInDB

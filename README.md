@@ -1,7 +1,5 @@
 # daac-broker
 
-
-
 # Required Variables
 
 ```bash
@@ -34,3 +32,15 @@ system:image-pullers    /system:image-puller                                    
 ### OpenShift
 
 oc new-app --name guac-api -e POSTGRES_HOST='127.0.0.1' -e POSTGRES_USER='guac' -e POSTGRES_PASSWORD='guac_pass' -e POSTGRES_DATABASE='guacamole_db' https://github.com/snowjet/daac-broker.git
+
+
+## Local Run
+
+```
+export POSTGRES_HOST='127.0.0.1'
+export POSTGRES_USER='guac'
+export POSTGRES_PASSWORD='guac_pass'
+export POSTGRES_DATABASE='guacamole_db'
+
+oc login -u <user> http://openshiftcluser
+```

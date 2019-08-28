@@ -6,6 +6,7 @@ from .rwmodel import RWModel
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 class User(RWModel):
     username: str
     email: Optional[str] = None

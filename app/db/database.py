@@ -1,11 +1,10 @@
 import psycopg2
 
-from core.config import (DATABASE_URL, MAX_CONNECTIONS_COUNT,
-                         MIN_CONNECTIONS_COUNT)
+from core.config import DATABASE_URL, MAX_CONNECTIONS_COUNT, MIN_CONNECTIONS_COUNT
 from core.log import logger
 
 
-class DataBase():
+class DataBase:
     def __init__(self):
 
         logger.info("Database Init")
