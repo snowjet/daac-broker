@@ -17,7 +17,7 @@ DATABASE_URL = os.getenv("DATABASE_URL", "")
 
 if not DATABASE_URL:
     POSTGRES_HOST = os.getenv("POSTGRES_HOST", "postgres")
-    POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", 5432))
+    POSTGRES_PORT = int(os.getenv("POSTGRES_SERVICE_PORT", 5432))
     POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASS = os.getenv("POSTGRES_PASSWORD", "postgres")
     POSTGRES_NAME = os.getenv("POSTGRES_DB", "guacamole_db")
