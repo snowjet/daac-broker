@@ -42,6 +42,8 @@ else:
 
 # Import Auth0 config
 auth0_config = {}
-auth0_config.client_id = os.getenv("client_id", "")
-auth0_config.client_secret = os.getenv("client_secret", "")
-auth0_config.auth0_domain = os.getenv("auth0_domain", "")
+auth0_config["client_id"] = os.getenv("client_id", "")
+auth0_config["client_secret"] = os.getenv("client_secret", "")
+auth0_config["auth0_domain"] = os.getenv("auth0_domain", "")
+auth0_config["SECRET_KEY"] = os.getenv("SECRET_KEY", "super secret random key")
+auth0_config["ROOT_APP_DOMAIN"] = os.getenv("ROOT_APP_DOMAIN", "127.0.0.1:5000")

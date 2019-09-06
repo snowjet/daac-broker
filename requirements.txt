@@ -9,3 +9,7 @@ passlib
 bcrypt
 python-multipart
 python-dotenv
+requests
+authlib
+six
+flask

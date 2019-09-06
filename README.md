@@ -42,5 +42,11 @@ export POSTGRES_USER='guac'
 export POSTGRES_PASSWORD='guac_pass'
 export POSTGRES_DATABASE='guacamole_db'
 
+docker run --name postgres \
+    -e POSTGRESQL_USER=${POSTGRES_USER} \
+    -e POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD} \
+    -e POSTGRESQL_DATABASE=${POSTGRES_DATABASE} \
+    -d -p 5432:5432 registry.redhat.io/rhscl/postgresql-96-rhel7
+
 oc login -u <user> http://openshiftcluser
 ```
