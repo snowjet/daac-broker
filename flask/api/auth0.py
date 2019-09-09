@@ -15,9 +15,9 @@ from six.moves.urllib.parse import urlencode
 
 from core.config import auth0_config
 from core.auth import requires_auth
+from core.log import logger
 
 from flask import Blueprint
-
 
 def create_auth0_blueprint(oauth):
 
@@ -44,7 +44,7 @@ def create_auth0_blueprint(oauth):
 
         # Store the user information in flask session.
         session["jwt_payload"] = userinfo
-        print(userinfo)
+        logger.debug("userinfo", userinfo=userinfo)
         session["profile"] = {
             "user_id": userinfo["sub"],
             "name": userinfo["name"],

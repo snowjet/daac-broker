@@ -8,36 +8,10 @@ from flask import session
 from flask import redirect
 
 from core.log import logger
+from core.authman import Auth0Management
 from models.user import User, UserInDB
 
-
-userDB = {
-    "user": {
-        "username": "user",
-        "full_name": "John Doe",
-        "email": "user@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
-        "role": "user",
-    },
-    "john": {
-        "username": "john",
-        "full_name": "John Doe",
-        "email": "user@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
-        "role": "admin",
-    },
-    "admin": {
-        "username": "admin",
-        "full_name": "John Doe",
-        "email": "admin@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
-        "role": "admin",
-    },
-}
-
+auth0_mgmt = Auth0Management()
 
 def requires_auth(f):
     @wraps(f)
@@ -55,38 +29,10 @@ def is_admin(f):
     def decorated(*args, **kwargs):
         userinfo = session["profile"]
 
-        user = _get_user(userDB, username=userinfo["name"])
-
-        print(user)
-
-        if user is None:
-            raise abort(403, description="Not an admin")
-            return redirect("/")
-
-        if user.disabled:
-            abort(403, description="Inactive user")
-            return redirect("/")
-
-        if user.role.lower() != "admin":
+        if not auth0_mgmt.is_admin(userinfo['name']):
             raise abort(403, description="Not an admin")
             return redirect("/")
 
         return f(*args, **kwargs)
 
     return decorated
-
-
-def _verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-
-def _get_password_hash(password):
-    return pwd_context.hash(password)
-
-
-def _get_user(userDB, username: str):
-    if username in userDB:
-        user_dict = userDB[username]
-        return UserInDB(**user_dict)
-    
-    return None
