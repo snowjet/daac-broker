@@ -13,6 +13,7 @@ from models.user import User, UserInDB
 
 auth0_mgmt = Auth0Management()
 
+
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -29,7 +30,7 @@ def is_admin(f):
     def decorated(*args, **kwargs):
         userinfo = session["profile"]
 
-        if not auth0_mgmt.is_admin(userinfo['name']):
+        if not auth0_mgmt.is_admin(userinfo["name"]):
             raise abort(403, description="Not an admin")
             return redirect("/")
 

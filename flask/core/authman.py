@@ -7,7 +7,6 @@ from core.log import logger
 
 
 class Auth0Management:
-
     def __init__(self):
 
         self._request_token()
@@ -28,7 +27,9 @@ class Auth0Management:
         mgmt_api_token = token["access_token"]
 
         self.auth0 = auth0v3(domain, mgmt_api_token)
-        self.admin_role = self.auth0.roles.list(name_filter=auth0_config["admin_role"])['roles'][0]['id']
+        self.admin_role = self.auth0.roles.list(name_filter=auth0_config["admin_role"])[
+            "roles"
+        ][0]["id"]
 
     def is_admin(self, name):
 
@@ -36,8 +37,8 @@ class Auth0Management:
 
             users = self.auth0.roles.list_users(id=self.admin_role)
 
-            for user in users['users']:
-                if str(user['name']).lower() == str(name).lower():
+            for user in users["users"]:
+                if str(user["name"]).lower() == str(name).lower():
                     return True
 
             return False

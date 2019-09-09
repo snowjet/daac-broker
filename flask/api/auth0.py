@@ -19,6 +19,7 @@ from core.log import logger
 
 from flask import Blueprint
 
+
 def create_auth0_blueprint(oauth):
 
     auth_blueprint = Blueprint("auth", __name__)
