@@ -50,6 +50,7 @@ def get_user():
 def add_user(username: str, user_creds: UserCreds):
 
     hostname = f"desktop-{username}"
+
     password = user_creds.password
 
     rdp_password = generate_password()

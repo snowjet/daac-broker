@@ -1,8 +1,7 @@
 openshift
 pyjwt
 psycopg2-binary
-uvicorn
-fastapi
+gunicorn
 daiquiri
 passgen
 passlib

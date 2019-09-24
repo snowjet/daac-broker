@@ -1,12 +1,26 @@
 # daac-broker
 
-# Required Variables
+# Required Env Variables
 
 ```bash
-export POSTGRES_HOST='127.0.0.1'
-export POSTGRES_USER='guac'
-export POSTGRES_PASSWORD='guac_pass'
-export POSTGRES_DATABASE='guacamole_db'
+PROJECT_NAME=DCaaS API Broker
+
+# Postgres
+POSTGRES_HOST=127.0.0.1
+POSTGRES_PORT=5432
+POSTGRES_USER=guac
+POSTGRES_PASSWORD=guac_pass
+POSTGRES_DB=guacamole_db
+
+SECRET_KEY=SOME SECRET VALUE
+
+LOG_LEVEL=debug
+
+# Auth0
+client_id=''
+client_secret=''
+auth0_domain=''
+ROOT_APP_DOMAIN=''
 ```
 
 ### Service Account
@@ -30,9 +44,9 @@ system:image-pullers    /system:image-puller                                    
 ```
 
 ### OpenShift
-
+```
 oc new-app --name guac-api -e POSTGRES_HOST='127.0.0.1' -e POSTGRES_USER='guac' -e POSTGRES_PASSWORD='guac_pass' -e POSTGRES_DATABASE='guacamole_db' -e APP_HOME=app https://github.com/snowjet/daac-broker.git
-
+```
 
 ## Local Run
 

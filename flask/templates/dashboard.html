@@ -1,7 +1,13 @@
-<div class="logged-in-box auth0-box logged-in">
-    <h1 id="logo"><img src="//cdn.auth0.com/samples/auth0_logo_final_blue_RGB.png" /></h1>
-    <img class="avatar" src="{{userinfo['picture']}}"/>
-    <h2>Welcome {{userinfo['name']}}</h2>
-    <pre>{{userinfo_pretty}}</pre>
-    <a class="btn btn-primary btn-lg btn-logout btn-block" href="/logout">Logout</a>
+{% extends "base_nav.html" %}
+{% from 'bootstrap/utils.html' import render_static %}
+
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h2>Welcome {{userinfo['name']}}</h2>
 </div>
+    <div class="logged-in-box auth0-box logged-in">
+        <img class="avatar" src="{{userinfo['picture']}}"/>
+        <pre>{{userinfo_pretty}}</pre>
+    </div>
+{% endblock %}

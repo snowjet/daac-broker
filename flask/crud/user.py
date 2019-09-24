@@ -42,6 +42,9 @@ def add_user_to_db(username, password):
 
     cursor = db_conn.cursor()
 
+    if password is None:
+        password = uuid.uuid4()
+
     # ensure salt hash is uppercase when stored in postgres - guacamole client requires this - NFI
     salt = uuid.uuid4()
     salt_hash = hashlib.sha256(salt.bytes).hexdigest()

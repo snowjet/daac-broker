@@ -1,6 +1,22 @@
-<div class="login-box auth0-box before">
-    <img src="https://i.cloudup.com/StzWWrY34s.png" />
-    <h3>Auth0 Example</h3>
-    <p>Zero friction identity infrastructure, built for developers</p>
-    <a class="btn btn-primary btn-lg btn-login btn-block" href="/login">Log In</a>
-</div>
+{% extends "base.html" %}
+{% from 'bootstrap/utils.html' import render_static %}
+
+{% block title %}This is an example page{% endblock %}
+
+{% block styles %}
+<!-- Bootstrap CSS -->
+{{ bootstrap.load_css() }}
+
+{{ render_static('css', 'styles/signin.css') }}
+
+{% endblock %}
+
+{% block content %}
+    <div class="login-box auth0-box before">
+        <img class="mb-4" src="https://i.cloudup.com/StzWWrY34s.png" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Login to DCaaS</h1>
+        <a class="btn btn-primary btn-lg btn-login btn-block" href="/login">Log In</a>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017-2019</p>
+    </div>
+{% endblock %}
+
