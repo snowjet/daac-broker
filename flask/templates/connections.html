@@ -1,0 +1,37 @@
+{% extends "base_nav.html" %}
+{% from 'bootstrap/utils.html' import render_static %}
+
+{% block styles %}
+{{super()}}
+{{ render_static('css', 'styles/connections.css') }}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h2>Welcome {{userinfo['name']}}</h2>
+</div>
+
+<div class="card-deck mb-3 text-center">
+    {% for conn in connections %}
+    <div class="card shadow-sm" style="width: 18rem;">
+      <div class="card-header">
+        <h4 class="my-0 font-weight-normal">{{ connections[conn]['name'] }}</h4>
+      </div>
+      <div class="card-body">
+        <h1 class="card-title pricing-card-title">$15 </small></h1>
+        <ul class="list-unstyled mt-3 mb-4">
+          <li>20 users included</li>
+          <li>10 GB of storage</li>
+          <li>Priority email support</li>
+          <li>{{ conn }}</li>
+        </ul>
+        <div class="btn-group">
+            <a class="btn btn-primary" href="{{ connections[conn]['url'] }}">Connect</a>
+            <a class="btn btn-danger" href="{{ connections[conn]['url'] }}">Delete</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

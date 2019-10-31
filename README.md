@@ -45,7 +45,7 @@ system:image-pullers    /system:image-puller                                    
 
 ### OpenShift
 ```
-oc new-app --name guac-api -e POSTGRES_HOST='127.0.0.1' -e POSTGRES_USER='guac' -e POSTGRES_PASSWORD='guac_pass' -e POSTGRES_DATABASE='guacamole_db' -e APP_HOME=app https://github.com/snowjet/daac-broker.git
+oc new-app --name guac-api -e POSTGRES_HOST='127.0.0.1' -e POSTGRES_USER='guac' -e POSTGRES_PASSWORD='guac_pass' -e POSTGRES_DATABASE='guacamole_db' -e APP_HOME=flask https://github.com/snowjet/daac-broker.git
 ```
 
 ## Local Run

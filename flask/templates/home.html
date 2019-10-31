@@ -5,8 +5,7 @@
 
 {% block styles %}
 <!-- Bootstrap CSS -->
-{{ bootstrap.load_css() }}
-
+{{super()}}
 {{ render_static('css', 'styles/signin.css') }}
 
 {% endblock %}

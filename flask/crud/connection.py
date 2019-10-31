@@ -4,6 +4,21 @@ from db.db_utils import get_database_connection
 
 db_conn = get_database_connection()
 
+def get_connections(username):
+    """Returns a list of connections for a user"""
+    
+    cursor = db_conn.cursor()
+
+    cursor.execute(
+        "SELECT connection_id from guacamole_connection where connection_name=%s;",
+        (hostname,),
+    )
+    connection_id = cursor.fetchone()
+
+    # Close communication with the database
+    cursor.close()
+
+    return connection_id
 
 def get_connection_id(hostname):
 

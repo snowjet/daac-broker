@@ -6,8 +6,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>DCaaS</title>
+    {% block styles %}
+    <!-- Bootstrap CSS -->
     {{ bootstrap.load_css() }}
     {{ render_static('css', 'styles/dashboard.css') }}
+    {% endblock %}
 </head>
 <body>
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
@@ -109,9 +112,11 @@
 </main>
 </div>
 </div>
+{% block scripts %}
+<!-- Optional JavaScript -->
 {{ bootstrap.load_js() }}
 {{ render_static('js', 'js/dashboard.js') }}
 {{ render_static('js', 'https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js', local=False) }}
-
+{% endblock %}
 </body>
 </html>
