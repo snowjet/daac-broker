@@ -1,6 +1,6 @@
 from core.log import logger
 from core.security import generate_password, hash_password
-from crud.connection import create_connection, join_connection_to_user, get_connection
+from crud.connection import create_connection, join_connection_to_user, get_connections
 from crud.openshift import create_user_daac
 from crud.user import add_user_to_db
 from models.user import User, UserCreds
