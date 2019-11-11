@@ -7,6 +7,25 @@ from db.db_utils import get_database_connection
 db_conn = get_database_connection()
 
 
+def create_password_hash(password):
+
+    if password is None:
+        logger.error("Password not passed for user", username=usernam)
+        return False
+
+    # ensure salt hash is uppercase when stored in postgres - guacamole client requires this - NFI
+    salt = uuid.uuid4()
+    salt_hash = hashlib.sha256(salt.bytes).hexdigest()
+    salt_hash_upper = salt_hash.upper()
+    password_hash = hashlib.sha256(
+        "".join((password, salt_hash_upper)).encode("UTF-8")
+    ).hexdigest()
+    logger.debug("Salt Hash", salt_hash_upper=salt_hash_upper)
+    logger.debug("Password Hash", password_hash=password_hash)
+
+    return password_hash, salt_hash
+
+
 def get_user_id(entity_id):
 
     cursor = db_conn.cursor()
@@ -45,15 +64,7 @@ def add_user_to_db(username, password):
     if password is None:
         password = uuid.uuid4()
 
-    # ensure salt hash is uppercase when stored in postgres - guacamole client requires this - NFI
-    salt = uuid.uuid4()
-    salt_hash = hashlib.sha256(salt.bytes).hexdigest()
-    salt_hash_upper = salt_hash.upper()
-    password_hash = hashlib.sha256(
-        "".join((password, salt_hash_upper)).encode("UTF-8")
-    ).hexdigest()
-    logger.debug("Salt Hash", salt_hash_upper=salt_hash_upper)
-    logger.debug("Password Hash", password_hash=password_hash)
+    password_hash, salt_hash = create_password_hash(password)
 
     entity_id = get_user_entity_id(username)
     if entity_id is None:
@@ -88,6 +99,35 @@ def add_user_to_db(username, password):
 
     else:
         logger.info("Retrieved entity id for user", username=username)
+
+    # Close communication with the database
+    cursor.close()
+
+    return True
+
+def update_users_db_password(username, password):
+
+    cursor = db_conn.cursor()
+
+    if password is None:
+        logger.error("Password not passed for user", username=username)
+        return False
+
+    password_hash, salt_hash = create_password_hash(password)
+
+    entity_id = get_user_entity_id(username)
+    if entity_id is None:
+        logger.error("User does not exist, wont update password", username=username)
+    else:
+        logger.info("Retrieved entity id for user", username=username)
+
+        # update user to entity table
+        cursor.execute(
+            "INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date) \
+                        SELECT entity_id, decode(%s, 'hex'), decode(%s, 'hex'), CURRENT_TIMESTAMP \
+                        FROM guacamole_entity WHERE name = %s AND guacamole_entity.type = 'USER';",
+            (password_hash, salt_hash, username),
+        )
 
     # Close communication with the database
     cursor.close()

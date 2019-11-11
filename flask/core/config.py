@@ -15,6 +15,8 @@ LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 PROJECT_NAME = os.getenv("PROJECT_NAME", "app")
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 
+GUACADMIN_PASSWORD = os.getenv("GUACADMIN_PASSWORD", "guacadmin")
+
 if not DATABASE_URL:
     POSTGRES_HOST = os.getenv("POSTGRES_HOST", "postgres")
     POSTGRES_PORT = int(os.getenv("POSTGRES_SERVICE_PORT", 5432))

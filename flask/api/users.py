@@ -31,7 +31,7 @@ def read_user_me():
     "/users/connection", methods=["GET"]
 )
 @requires_auth
-def read_user_me_connection():
+def read_user_my_connection():
 
     connections = {}
     connections['0'] = {'name': "desktop", 'url': 'https://guac'}

@@ -5,6 +5,9 @@ import psycopg2
 from core.log import logger
 from db.database import DataBase
 
+from crud.user import update_users_db_password
+from core.config import GUACADMIN_PASSWORD
+
 logger.info("Get DB instance")
 db = DataBase()
 
@@ -56,6 +59,7 @@ def load_schema_safe():
         db_schema = os.path.join(os.path.dirname(__file__), "db_schema/initdb.sql")
         sql_file = open(db_schema, "r")
         cursor.execute(sql_file.read())
+        update_users_db_password(GUACADMIN_PASSWORD)
     else:
         return_msg = "tables already has a schema"
         logger.info(return_msg)
