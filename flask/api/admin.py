@@ -22,7 +22,7 @@ admin_blueprint = Blueprint("admin_blueprint", __name__)
 def prepare_db():
 
     msg = load_schema_safe()
-    update_users_db_password(GUACADMIN_PASSWORD)
+    update_users_db_password('guacadmin', GUACADMIN_PASSWORD)
 
     return {"prepare-db": msg}
 

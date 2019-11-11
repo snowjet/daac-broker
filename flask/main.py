@@ -42,7 +42,7 @@ app.register_blueprint(users_blueprint)
 
 msg = load_schema_safe()
 logger.info("Setup DB", load_schema_msg=msg)
-update_users_db_password(GUACADMIN_PASSWORD)
+update_users_db_password('guacadmin', GUACADMIN_PASSWORD)
 
 @app.route("/")
 def home():
