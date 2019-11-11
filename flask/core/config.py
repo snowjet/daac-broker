@@ -9,7 +9,8 @@ API_V1_STR = "/api"
 JWT_TOKEN_PREFIX = "Token"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # one week
 
-load_dotenv(".env")
+env_file = os.environ.get("env_file", ".env")
+load_dotenv(env_file)
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 PROJECT_NAME = os.getenv("PROJECT_NAME", "app")
@@ -48,5 +49,5 @@ auth0_config["client_id"] = os.getenv("client_id", "")
 auth0_config["client_secret"] = os.getenv("client_secret", "")
 auth0_config["auth0_domain"] = os.getenv("auth0_domain", "")
 auth0_config["SECRET_KEY"] = os.getenv("SECRET_KEY", "super secret random key")
-auth0_config["ROOT_APP_DOMAIN"] = os.getenv("ROOT_APP_DOMAIN", "127.0.0.1:5000")
+auth0_config["daac_redirect_domain"] = os.getenv("daac_redirect_domain", "127.0.0.1:5000")
 auth0_config["admin_role"] = os.getenv("admin_role", "guacadmin")

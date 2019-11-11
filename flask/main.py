@@ -3,7 +3,6 @@ import json
 from os import environ as env
 from werkzeug.exceptions import HTTPException
 
-from dotenv import load_dotenv, find_dotenv
 from flask import Flask
 from flask import jsonify
 from flask import redirect
@@ -15,7 +14,11 @@ from six.moves.urllib.parse import urlencode
 
 from flask_bootstrap import Bootstrap
 
-from core.config import auth0_config, LOG_LEVEL
+from core.config import auth0_config, LOG_LEVEL, GUACADMIN_PASSWORD
+from core.log import logger
+from crud.user import update_users_db_password
+from db.db_utils import load_schema_safe
+
 from api.auth0 import create_auth0_blueprint
 from api.admin import admin_blueprint
 from api.users import users_blueprint
@@ -30,13 +33,16 @@ app.secret_key = auth0_config["SECRET_KEY"]
 app.config['BOOTSTRAP_SERVE_LOCAL'] = False
 
 bootstrap = Bootstrap(app)
-
 oauth = OAuth(app)
 
 auth0_blueprint = create_auth0_blueprint(oauth)
 app.register_blueprint(auth0_blueprint)
 app.register_blueprint(admin_blueprint)
 app.register_blueprint(users_blueprint)
+
+msg = load_schema_safe()
+logger.info("Setup DB", load_schema_msg=msg)
+update_users_db_password(GUACADMIN_PASSWORD)
 
 @app.route("/")
 def home():

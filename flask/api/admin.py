@@ -2,13 +2,14 @@ from core.log import logger
 from core.security import generate_password, hash_password
 from crud.connection import create_connection, join_connection_to_user
 from crud.openshift import create_user_daac
-from crud.user import add_user_to_db
+from crud.user import add_user_to_db, update_users_db_password
 from db.db_utils import load_schema_safe
 from models.user import User, UserCreds
 
 from flask import Blueprint
 
 from core.auth import requires_auth, is_admin
+from core.config import GUACADMIN_PASSWORD
 
 admin_blueprint = Blueprint("admin_blueprint", __name__)
 
@@ -21,6 +22,7 @@ admin_blueprint = Blueprint("admin_blueprint", __name__)
 def prepare_db():
 
     msg = load_schema_safe()
+    update_users_db_password(GUACADMIN_PASSWORD)
 
     return {"prepare-db": msg}
 
