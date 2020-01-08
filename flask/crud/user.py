@@ -125,8 +125,12 @@ def update_users_db_password(username, password):
         cursor.execute(
             "INSERT INTO guacamole_user (entity_id, password_hash, password_salt, password_date) \
                         SELECT entity_id, decode(%s, 'hex'), decode(%s, 'hex'), CURRENT_TIMESTAMP \
-                        FROM guacamole_entity WHERE name = %s AND guacamole_entity.type = 'USER';",
-            (password_hash, salt_hash, username),
+                        FROM guacamole_entity WHERE name = %s AND guacamole_entity.type = 'USER' \
+            ON CONFLICT (entity_id) \
+                        DO UPDATE guacamole_user \
+                        SET password_hash = decode(%s, 'hex'),  password_salt  = decode(%s, 'hex') \
+                        WHERE entity_id = entity_id;",
+            (password_hash, salt_hash, username, password_hash, salt_hash),
         )
 
     # Close communication with the database
