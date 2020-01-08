@@ -128,7 +128,7 @@ def update_users_db_password(username, password):
                         FROM guacamole_entity WHERE name = %s AND guacamole_entity.type = 'USER' \
             ON CONFLICT (entity_id) \
                 DO UPDATE \
-                SET entity_id = %s, password_hash = decode(%s, 'hex'),  password_salt  = decode(%s, 'hex');",
+                SET entity_id = %s, password_hash = decode(%s, 'hex'),  password_salt = decode(%s, 'hex');",
             (password_hash, salt_hash, username, entity_id, password_hash, salt_hash),
         )
 
