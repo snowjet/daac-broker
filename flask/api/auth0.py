@@ -10,7 +10,7 @@ from flask import redirect
 from flask import render_template
 from flask import session
 from flask import url_for
-from authlib.flask.client import OAuth
+from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
 
 from core.config import auth0_config

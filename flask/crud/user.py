@@ -127,10 +127,9 @@ def update_users_db_password(username, password):
                         SELECT entity_id, decode(%s, 'hex'), decode(%s, 'hex'), CURRENT_TIMESTAMP \
                         FROM guacamole_entity WHERE name = %s AND guacamole_entity.type = 'USER' \
             ON CONFLICT (entity_id) \
-                        DO UPDATE guacamole_user \
-                        SET password_hash = decode(%s, 'hex'),  password_salt  = decode(%s, 'hex') \
-                        WHERE entity_id = entity_id;",
-            (password_hash, salt_hash, username, password_hash, salt_hash),
+                DO UPDATE \
+                SET entity_id = %s, password_hash = decode(%s, 'hex'),  password_salt  = decode(%s, 'hex');",
+            (password_hash, salt_hash, username, entity_id, password_hash, salt_hash),
         )
 
     # Close communication with the database
