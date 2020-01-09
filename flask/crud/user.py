@@ -4,7 +4,31 @@ import uuid
 from core.log import logger
 from db.db_utils import get_database_connection
 
+from core.security import generate_password, hash_password
+from crud.connection import create_connection, join_connection_to_user, get_connections
+
 db_conn = get_database_connection()
+
+
+def create_user_and_connection(username):
+
+    hostname = f"desktop-{username}"
+
+    # Set password to None if using Auth0 backend
+    password = None
+
+    rdp_password = generate_password()
+    password_hash = hash_password(password=rdp_password)
+
+    add_user_to_db(username, password)
+    create_connection(username, hostname, password=rdp_password)
+    join_connection_to_user(username, hostname)
+
+    dc_msg, svc_msg = create_user_daac(username, password_hash)
+
+    logger.info("Attempted to create user", user=username, dc=dc_msg, svc=svc_msg)
+
+    return {"user-added": username}
 
 
 def create_password_hash(password):
