@@ -2,6 +2,8 @@ import binascii
 import hashlib
 import os
 import secrets
+import crypt
+from passlib.hash import sha512_crypt
 
 import passgen
 
@@ -21,6 +23,12 @@ def generate_password():
     logger.debug("Generate a password")
     return passgen.passgen(length=32)
 
+def generate_linux_password_hash(password):
+    """Generate Linux Password Hash"""
+
+    password_hash = sha512_crypt.hash(password)
+
+    return password_hash
 
 def hash_password(password):
     """Hash a password for storing"""

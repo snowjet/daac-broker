@@ -32,7 +32,7 @@ def create_auth0_blueprint(oauth):
         api_base_url=f"https://{auth0_config['auth0_domain']}",
         access_token_url=f"https://{auth0_config['auth0_domain']}/oauth/token",
         authorize_url=f"https://{auth0_config['auth0_domain']}/authorize",
-        client_kwargs={"scope": "openid profile"},
+        client_kwargs={"scope": "openid profile email"},
     )
 
     # Here we're using the /callback route.
@@ -45,7 +45,6 @@ def create_auth0_blueprint(oauth):
 
         # Store the user information in flask session.
         session["jwt_payload"] = userinfo
-        logger.debug("userinfo", userinfo=userinfo)
         session["profile"] = {
             "user_id": userinfo["sub"],
             "name": userinfo["name"],
@@ -56,7 +55,7 @@ def create_auth0_blueprint(oauth):
     @auth_blueprint.route("/login")
     def login():
         return auth0.authorize_redirect(
-            redirect_uri=f"https://{auth0_config['daac_redirect_domain']}/callback",
+            redirect_uri=f"{auth0_config['daac_redirect_domain']}/callback",
             audience=f"https://{auth0_config['auth0_domain']}/userinfo",
         )
 

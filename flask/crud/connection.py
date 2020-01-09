@@ -7,7 +7,7 @@ db_conn = get_database_connection()
 
 def get_connections(username):
     """Returns a list of connections for a user"""
-    
+
     cursor = db_conn.cursor()
 
     cursor.execute(
@@ -20,6 +20,7 @@ def get_connections(username):
     cursor.close()
 
     return connection_id
+
 
 def get_connection_id(hostname):
 
@@ -41,6 +42,9 @@ def create_connection(username, hostname, password, protocol="rdp", port="3389")
     con_name = hostname
     cursor = db_conn.cursor()
 
+    # hard coding the username of the container for the timebeing
+    username = 'user'
+    
     # Need to check if the hostname already exists - then we are just updating - Determine the connection_id
     cursor.execute(
         "SELECT connection_id FROM guacamole_connection WHERE connection_name = %s AND parent_id IS NULL;",
@@ -49,7 +53,7 @@ def create_connection(username, hostname, password, protocol="rdp", port="3389")
     connection_id = cursor.fetchone()
 
     if connection_id is None:
-        logger.info("Adding new connection", name=con_name)
+        logger.info("Adding new connection", con_name=con_name)
 
         cursor.execute(
             "INSERT INTO guacamole_connection (connection_name, protocol) VALUES (%s, %s);",
@@ -83,7 +87,7 @@ def create_connection(username, hostname, password, protocol="rdp", port="3389")
     else:
         logger.error(
             "Connection ID already exists - use update",
-            name=con_name,
+            con_name=con_name,
             conneciton_id=connection_id[0],
         )
 
@@ -95,6 +99,9 @@ def create_connection(username, hostname, password, protocol="rdp", port="3389")
 def update_connection(username, hostname, password, protocol="rdp", port="3389"):
     con_name = hostname
     cursor = db_conn.cursor()
+
+    # hard coding the username of the container for the timebeing
+    username = 'user'
 
     # Need to check if the hostname already exists - then we are just udpdating - Determine the connection_id
     cursor.execute(
@@ -111,7 +118,7 @@ def update_connection(username, hostname, password, protocol="rdp", port="3389")
     else:
         logger.info(
             "Connection ID already exists",
-            name=con_name,
+            con_name=con_name,
             conneciton_id=connection_id[0],
         )
 

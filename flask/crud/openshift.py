@@ -74,7 +74,7 @@ def _create_desktop_svc(service_name, desktop_name):
 def _create_dc_body(username, desktop_name, password_hash):
 
     body = {
-        "apiVersion": "v1",
+        "apiVersion": "apps.openshift.io/v1",
         "kind": "DeploymentConfig",
         "metadata": {
             "annotations": {
@@ -163,7 +163,7 @@ def _create_desktop_dc(username, desktop_name, password_hash):
 
         else:
 
-            body = _create_dc_body(desktop_name, password_hash)
+            body = _create_dc_body(username, desktop_name, password_hash)
 
             v1_DeploymentConfig.create(body=body, namespace=NAMESPACE)
 
@@ -178,10 +178,10 @@ def _create_desktop_dc(username, desktop_name, password_hash):
         logger.error("Error Occurred in API", error=error_msg)
 
 
-def create_user_daac(username, password_hash):
+def create_daac(username, username_digest, password_hash):
 
-    service_name = "desktop-%s" % (username)
-    desktop_name = "desktop-%s" % (username)
+    service_name = "desktop-%s" % (username_digest)
+    desktop_name = "desktop-%s" % (username_digest)
 
     dc_msg = _create_desktop_dc(username, desktop_name, password_hash)
     svc_msg = _create_desktop_svc(service_name, desktop_name)
@@ -189,7 +189,7 @@ def create_user_daac(username, password_hash):
     return dc_msg, svc_msg
 
 
-def update_user_daac(username):
+def update_user_daac(username, username_digest, password_hash):
 
     service_name = "desktop-%s" % (username)
     desktop_name = "desktop-%s" % (username)
@@ -200,12 +200,10 @@ def update_user_daac(username):
     return True
 
 
-def _delete_desktop_dc(username):
+def _delete_desktop_dc(username, username_digest):
 
     try:
-
-        username = username
-        desktop_name = "desktop-%s" % (username)
+        desktop_name = "desktop-%s" % (username_digest)
 
         v1_DeploymentConfig = oc_conn.resources.get(
             api_version="v1", kind="DeploymentConfig"
@@ -221,12 +219,10 @@ def _delete_desktop_dc(username):
         logger.error("Error Occurred starting guac-api", error=error_msg)
 
 
-def _delete_desktop_svc(username):
+def _delete_desktop_svc(username, username_digest):
 
     try:
-
-        username = username
-        service_name = "desktop-%s" % (username)
+        service_name = "desktop-%s" % (username_digest)
 
         v1_service = oc_conn.resources.get(api_version="v1", kind="Service")
 

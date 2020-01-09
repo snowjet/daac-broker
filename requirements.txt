@@ -16,3 +16,4 @@ authlib
 six
 flask
 auth0-python
+wtforms

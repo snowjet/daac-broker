@@ -4,37 +4,36 @@ import uuid
 from core.log import logger
 from db.db_utils import get_database_connection
 
-from core.security import generate_password, hash_password
-from crud.connection import create_connection, join_connection_to_user, get_connections
-
 db_conn = get_database_connection()
 
 
-def create_user_and_connection(username):
+def add_admin_to_user(username):
 
-    hostname = f"desktop-{username}"
+    cursor = db_conn.cursor()
 
-    # Set password to None if using Auth0 backend
-    password = None
-
-    rdp_password = generate_password()
-    password_hash = hash_password(password=rdp_password)
-
-    add_user_to_db(username, password)
-    create_connection(username, hostname, password=rdp_password)
-    join_connection_to_user(username, hostname)
-
-    dc_msg, svc_msg = create_user_daac(username, password_hash)
-
-    logger.info("Attempted to create user", user=username, dc=dc_msg, svc=svc_msg)
-
-    return {"user-added": username}
+    cursor.execute(
+        "INSERT INTO guacamole_system_permission (entity_id, permission) \
+            SELECT entity_id, permission::guacamole_system_permission_type \
+            FROM ( \
+            VALUES \
+            ('%s', 'CREATE_CONNECTION'), \
+            ('%s', 'CREATE_CONNECTION_GROUP'), \
+            ('%s', 'CREATE_SHARING_PROFILE'), \
+            ('%s', 'CREATE_USER'), \
+            ('%s', 'CREATE_USER_GROUP'), \
+            ('%s', 'ADMINISTER') \
+    ) permissions (username, permission) \
+    JOIN guacamole_entity ON permissions.username = guacamole_entity.name AND guacamole_entity.type = 'USER';",
+        (username),
+    )
+    
+    return True
 
 
 def create_password_hash(password):
 
     if password is None:
-        logger.error("Password not passed for user", username=usernam)
+        logger.error("Password not passed for user", username=username)
         return False
 
     # ensure salt hash is uppercase when stored in postgres - guacamole client requires this - NFI
@@ -42,7 +41,7 @@ def create_password_hash(password):
     salt_hash = hashlib.sha256(salt.bytes).hexdigest()
     salt_hash_upper = salt_hash.upper()
     password_hash = hashlib.sha256(
-        "".join((password, salt_hash_upper)).encode("UTF-8")
+        "".join((str(password), str(salt_hash_upper))).encode("UTF-8")
     ).hexdigest()
     logger.debug("Salt Hash", salt_hash_upper=salt_hash_upper)
     logger.debug("Password Hash", password_hash=password_hash)
@@ -128,6 +127,7 @@ def add_user_to_db(username, password):
     cursor.close()
 
     return True
+
 
 def update_users_db_password(username, password):
 

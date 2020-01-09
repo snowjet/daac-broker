@@ -37,4 +37,3 @@ def is_admin(f):
         return f(*args, **kwargs)
 
     return decorated
-

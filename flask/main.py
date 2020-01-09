@@ -30,7 +30,7 @@ else:
 
 app = Flask(__name__)
 app.secret_key = auth0_config["SECRET_KEY"]
-app.config['BOOTSTRAP_SERVE_LOCAL'] = False
+app.config["BOOTSTRAP_SERVE_LOCAL"] = False
 
 bootstrap = Bootstrap(app)
 oauth = OAuth(app)
@@ -42,12 +42,13 @@ app.register_blueprint(users_blueprint)
 
 msg = load_schema_safe()
 logger.info("Setup DB", load_schema_msg=msg)
-update_users_db_password('guacadmin', GUACADMIN_PASSWORD)
+update_users_db_password("guacadmin", GUACADMIN_PASSWORD)
+
 
 @app.route("/")
 def home():
     return render_template("home.html")
 
 
-if __name__ == '__main__':
-    app.run(debug=DEBUG, host='0.0.0.0')
+if __name__ == "__main__":
+    app.run(debug=DEBUG, host="0.0.0.0")
