@@ -56,7 +56,7 @@ def create_auth0_blueprint(oauth):
     @auth_blueprint.route("/login")
     def login():
         return auth0.authorize_redirect(
-            redirect_uri=f"http://{auth0_config['daac_redirect_domain']}/callback",
+            redirect_uri=f"https://{auth0_config['daac_redirect_domain']}/callback",
             audience=f"https://{auth0_config['auth0_domain']}/userinfo",
         )
 
