@@ -73,6 +73,9 @@ def _create_desktop_svc(service_name, desktop_name):
 
 def _create_dc_body(username, desktop_name, password_hash):
 
+    # temp hard code user
+    username = user
+
     body = {
         "apiVersion": "apps.openshift.io/v1",
         "kind": "DeploymentConfig",
