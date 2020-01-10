@@ -26,7 +26,7 @@ def generate_password():
 def generate_linux_password_hash(password):
     """Generate Linux Password Hash"""
 
-    password_hash = sha512_crypt.hash(password)
+    password_hash = sha512_crypt.using(rounds=5000).hash(password)
 
     return password_hash
 
