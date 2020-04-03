@@ -16,6 +16,9 @@ from wtforms import Form, TextField, TextAreaField, validators, StringField, Sub
 
 
 from core.auth import requires_auth
+from core.config import GUAC_URL
+
+import json
 
 users_blueprint = Blueprint("users_blueprint", __name__)
 
@@ -42,17 +45,12 @@ def user_connection():
 
             flash("Connection Creation Started")
 
-    connections = {}
-    connections["0"] = {"name": "desktop", "url": "https://guac"}
-    connections["1"] = {"name": "desktop2", "url": "https://guac2"}
+    connections = get_connections(username)
 
-    print(connections)
-
-    for conn in connections:
-        logger.debug("Connection Vars", connections=connections[conn])
+    logger.debug("Connections", connection=connections, GUAC_URL=GUAC_URL)
 
     return render_template(
-        "connections.html", userinfo=session["profile"], connections=connections
+        "connections.html", userinfo=session["profile"], connections=connections, GUAC_URL=GUAC_URL
     )
 
 

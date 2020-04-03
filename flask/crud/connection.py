@@ -2,24 +2,34 @@ from core.log import logger
 from crud.user import get_user_entity_id
 from db.db_utils import get_database_connection
 
-db_conn = get_database_connection()
+import psycopg2.extras
 
+db_conn = get_database_connection()
 
 def get_connections(username):
     """Returns a list of connections for a user"""
 
-    cursor = db_conn.cursor()
+    cursor = db_conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
     cursor.execute(
-        "SELECT connection_id from guacamole_connection where connection_name=%s;",
+        "SELECT connection_name FROM guacamole_connection JOIN guacamole_connection_permission \
+            ON guacamole_connection.connection_id = guacamole_connection_permission.connection_id \
+            JOIN guacamole_entity \
+            ON guacamole_connection_permission.entity_id = guacamole_entity.entity_id \
+            where guacamole_entity.name = %s;",
         (username,),
     )
-    connection_id = cursor.fetchone()
+    
+    connection_names = []
+    results = cursor.fetchall()
+    
+    for row in results:
+        connection_names.append(dict(row))
 
     # Close communication with the database
     cursor.close()
 
-    return connection_id
+    return connection_names
 
 
 def get_connection_id(hostname):

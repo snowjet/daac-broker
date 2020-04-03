@@ -20,17 +20,16 @@
     {% for conn in connections %}
     <div class="card shadow-sm" style="width: 18rem;">
       <div class="card-header">
-        <h4 class="my-0 font-weight-normal">{{ connections[conn]['name'] }}</h4>
+        <h4 class="my-0 font-weight-normal">{{ conn['connection_name'] }}</h4>
       </div>
       <div class="card-body">
         <h1 class="card-title pricing-card-title">ICON should be here</small></h1>
         <div class="btn-group">
-            <a class="btn btn-primary" href="{{ connections[conn]['url'] }}">Connect</a>
-            <a class="btn btn-danger" href="{{ connections[conn]['url'] }}">Delete</a>
+            <a class="btn btn-primary" href="{{ GUAC_URL }}">Connect</a>
+            <a class="btn btn-danger" href="{{ GUAC_URL }}">Delete</a>
         </div>
       </div>
     </div>
     {% endfor %}
 </div>
-
 {% endblock %}

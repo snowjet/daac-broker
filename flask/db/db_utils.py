@@ -1,6 +1,7 @@
 import os
 
 import psycopg2
+import psycopg2.extras
 
 from core.log import logger
 from db.database import DataBase

@@ -128,6 +128,7 @@ def _create_dc_body(username, desktop_name, password_hash):
                             },
                         }
                     ],
+                    "serviceAccountName": "guacrobot",
                     "volumes": [{"emptyDir": {"medium": "Memory"}, "name": "dshm"}],
                 },
             },
