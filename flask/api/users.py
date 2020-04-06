@@ -50,7 +50,10 @@ def user_connection():
     logger.debug("Connections", connection=connections, GUAC_URL=GUAC_URL)
 
     return render_template(
-        "connections.html", userinfo=session["profile"], connections=connections, GUAC_URL=GUAC_URL
+        "connections.html",
+        userinfo=session["profile"],
+        connections=connections,
+        GUAC_URL=GUAC_URL,
     )
 
 

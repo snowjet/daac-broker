@@ -23,12 +23,14 @@ def generate_password():
     logger.debug("Generate a password")
     return passgen.passgen(length=32)
 
+
 def generate_linux_password_hash(password):
     """Generate Linux Password Hash"""
 
     password_hash = sha512_crypt.using(rounds=5000).hash(password)
 
     return password_hash
+
 
 def hash_password(password):
     """Hash a password for storing"""

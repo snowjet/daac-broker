@@ -1,0 +1,55 @@
+{% from 'bootstrap/nav.html' import render_nav_item %}
+{% from 'bootstrap/utils.html' import render_static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>DCaaS</title>
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    {{ render_static('css', 'styles/landing.css') }}
+    {% endblock %}
+</head>
+<body>
+
+  <nav class="mb-1 navbar navbar-expand-lg navbar-light default-color lighten-4  border-bottom box-shadow">
+    <a class="navbar-brand" href="/dashboard">DCaaS</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-555"
+      aria-controls="navbarSupportedContent-555" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent-555">
+      <ul class="navbar-nav ml-auto nav-flex-icons">
+        <li class="nav-item">
+          <a class="nav-link waves-effect waves-light">
+            <i class="fas fa-envelope"></i>
+          </a>
+        </li>
+        <li class="nav-item avatar dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-55" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <img src="{{userinfo['picture']}}" class="rounded-circle z-depth-0"  height="35"alt="avatar image">
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg-right dropdown-secondary"
+            aria-labelledby="navbarDropdownMenuLink-55">
+            <a class="dropdown-item" href="#">Profile</a>
+            <a class="dropdown-item" href="/logout">Logout</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+         
+    {% block content %}{% endblock %}
+
+
+{% block scripts %}
+<!-- Optional JavaScript -->
+{{ bootstrap.load_js() }}
+{{ render_static('js', 'js/dashboard.js') }}
+{{ render_static('js', 'https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js', local=False) }}
+{% endblock %}
+</body>
+</html>

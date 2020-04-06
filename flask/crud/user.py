@@ -26,7 +26,7 @@ def add_admin_to_user(username):
     JOIN guacamole_entity ON permissions.username = guacamole_entity.name AND guacamole_entity.type = 'USER';",
         (username),
     )
-    
+
     return True
 
 

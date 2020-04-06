@@ -74,7 +74,7 @@ def _create_desktop_svc(service_name, desktop_name):
 def _create_dc_body(username, desktop_name, password_hash):
 
     # temp hard code user
-    username = 'user'
+    username = "user"
 
     body = {
         "apiVersion": "apps.openshift.io/v1",
@@ -204,7 +204,15 @@ def update_user_daac(username, username_digest, password_hash):
     return True
 
 
-def _delete_desktop_dc(username, username_digest):
+def delete_daac(username, username_digest):
+
+    dc_msg = _delete_desktop_dc(username_digest)
+    svc_msg = _delete_desktop_svc(username_digest)
+
+    return dc_msg, svc_msg
+
+
+def _delete_desktop_dc(username_digest):
 
     try:
         desktop_name = "desktop-%s" % (username_digest)
@@ -223,7 +231,7 @@ def _delete_desktop_dc(username, username_digest):
         logger.error("Error Occurred starting guac-api", error=error_msg)
 
 
-def _delete_desktop_svc(username, username_digest):
+def _delete_desktop_svc(username_digest):
 
     try:
         service_name = "desktop-%s" % (username_digest)

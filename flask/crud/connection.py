@@ -6,10 +6,11 @@ import psycopg2.extras
 
 db_conn = get_database_connection()
 
+
 def get_connections(username):
     """Returns a list of connections for a user"""
 
-    cursor = db_conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+    cursor = db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cursor.execute(
         "SELECT connection_name FROM guacamole_connection JOIN guacamole_connection_permission \
@@ -19,10 +20,10 @@ def get_connections(username):
             where guacamole_entity.name = %s;",
         (username,),
     )
-    
+
     connection_names = []
     results = cursor.fetchall()
-    
+
     for row in results:
         connection_names.append(dict(row))
 
@@ -53,8 +54,8 @@ def create_connection(username, hostname, password, protocol="rdp", port="3389")
     cursor = db_conn.cursor()
 
     # hard coding the username of the container for the timebeing
-    username = 'user'
-    
+    username = "user"
+
     # Need to check if the hostname already exists - then we are just updating - Determine the connection_id
     cursor.execute(
         "SELECT connection_id FROM guacamole_connection WHERE connection_name = %s AND parent_id IS NULL;",
@@ -111,7 +112,7 @@ def update_connection(username, hostname, password, protocol="rdp", port="3389")
     cursor = db_conn.cursor()
 
     # hard coding the username of the container for the timebeing
-    username = 'user'
+    username = "user"
 
     # Need to check if the hostname already exists - then we are just udpdating - Determine the connection_id
     cursor.execute(
@@ -183,3 +184,38 @@ def join_connection_to_user(username, hostname):
     cursor.close()
 
     return True
+
+
+def delete_connection(username, hostname):
+    try:
+        con_name = hostname
+        cursor = db_conn.cursor()
+
+        # hard coding the username of the container for the timebeing
+        username = "user"
+
+        # Need to check if the hostname already exists - then we are just updating - Determine the connection_id
+        cursor.execute(
+            "SELECT connection_id FROM guacamole_connection WHERE connection_name = %s AND parent_id IS NULL;",
+            (hostname,),
+        )
+        connection_id = cursor.fetchone()
+
+        print(connection_id)
+
+        if connection_id is None:
+            logger.info("Connection does not exist", con_name=con_name)
+            return False
+
+        rows_deleted = 0
+
+        cursor.execute("DELETE FROM guacamole_connection WHERE connection_id = %s", (connection_id,))
+
+        rows_deleted = cursor.rowcount
+
+        cursor.close()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error("Error deleting connection", error=errror)
+
+    return rows_deleted
