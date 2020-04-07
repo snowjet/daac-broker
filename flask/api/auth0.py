@@ -104,9 +104,9 @@ def create_auth0_blueprint(oauth):
     def logout():
         # Clear session stored data
         session.clear()
-        # Redirect user to logout endpoint
+        # Redirect user to logout endpoint and then back to the home
         params = {
-            "returnTo": url_for("home", _external=True),
+            "returnTo": f"{auth0_config['daac_redirect_domain']}",
             "client_id": auth0_config["client_id"],
         }
         return redirect(auth0.api_base_url + "/v2/logout?" + urlencode(params))
