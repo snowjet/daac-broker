@@ -81,9 +81,13 @@ def _create_dc_body(username, desktop_name, password_hash):
         "kind": "DeploymentConfig",
         "metadata": {
             "annotations": {
-                "description": "Defines how to deploy a Desktop as a Container"
+                "description": "Defines how to deploy a Desktop as a Container",
+                "app.openshift.io/connects-to": "guacd",
             },
-            "labels": {"app": "%s" % (desktop_name)},
+            "labels": {
+                "app": "%s" % (desktop_name),
+                "app.kubernetes.io/part-of" : "dcaas",
+                },
             "name": "%s" % (desktop_name),
         },
         "spec": {
