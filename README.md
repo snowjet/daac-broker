@@ -1,5 +1,11 @@
 # daac-broker
 
+This is the main frontend for DCaaS. It uses auth0 for authenication. It will automatically create, and terminate Desktop Containers upon OpenShift.
+
+## DCaaS Run Demo
+
+!['DCaaS Run Demo'](./demo/daac-run.gif)
+
 # Required Env Variables
 
 ```bash
@@ -50,17 +56,52 @@ oc new-app --name guac-api -e POSTGRES_HOST='127.0.0.1' -e POSTGRES_USER='guac' 
 
 ## Local Run
 
-```
-export POSTGRES_HOST='127.0.0.1'
-export POSTGRES_USER='guac'
-export POSTGRES_PASSWORD='guac_pass'
-export POSTGRES_DATABASE='guacamole_db'
+create a .env file with the required env variables
+```bash
+PROJECT_NAME=DCaaS API Broker
 
-docker run --name postgres \
-    -e POSTGRESQL_USER=${POSTGRES_USER} \
-    -e POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD} \
-    -e POSTGRESQL_DATABASE=${POSTGRES_DATABASE} \
-    -d -p 5432:5432 registry.redhat.io/rhscl/postgresql-96-rhel7
+# Postgres
+POSTGRES_HOST=127.0.0.1
+POSTGRES_PORT=5432
+POSTGRES_USER=guac
+POSTGRES_PASSWORD=guac_pass
+POSTGRES_DB=guacamole_db
 
-oc login -u <user> http://openshiftcluser
+# Auth0
+client_id=''
+client_secret=''
+auth0_domain=''
+daac_redirect_domain=''
+
+# Guac Admin Password
+GUACADMIN_PASSWORD=''
+
+# Project / Namespace name in OpenShift
+NAMESPACE=''
+
+# Guacamole Route 
+GUAC_URL= ''
+
+SECRET_KEY=SOME SECRET VALUE
+LOG_LEVEL=debug
 ```
+
+You will also need to configure Auth0 with localhost callbacks:
+
+| Argument               | Setting                        |
+|------------------------|:-------------------------------|
+| Allowed Callback URLs  | http://127.0.0.1:5000/callback | 
+| Allowed Logout URLs    | http://127.0.0.1:5000          |
+
+
+Port forward the posgtres database running on openshfit to the laptop
+```
+oc port-forward pod/postgres-1-<random> 5432:5432
+```
+
+The run python locally
+```bash
+python3 wsgi.py
+```
+
+Browse to http://127.0.0.1:5000

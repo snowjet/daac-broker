@@ -95,6 +95,10 @@ def create_connection(username, hostname, password, protocol="rdp", port="3389")
             "INSERT INTO guacamole_connection_parameter VALUES (%s, 'password', %s);",
             (connection_id[0], password),
         )
+        cursor.execute(
+            "INSERT INTO guacamole_connection_parameter VALUES (%s, 'ignore-cert', 'true');",
+            (connection_id[0]),
+        )
     else:
         logger.error(
             "Connection ID already exists - use update",
