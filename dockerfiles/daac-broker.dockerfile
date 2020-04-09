@@ -9,4 +9,4 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 WORKDIR /usr/src/app/flask
-CMD [ "python", "./wsgi.py" ]
+CMD [ "gunicorn", "main:app", "--bind=0.0.0.0:8080"]
