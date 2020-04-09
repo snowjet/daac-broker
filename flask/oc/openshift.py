@@ -13,7 +13,7 @@ class OpenShiftAccess:
     def __init__(self):
 
         # Check if code is running in OpenShift
-        if "OPENSHIFT_BUILD_NAME" in os.environ:
+        if "OPENSHIFT_BUILD_NAME" in os.environ or "KUBERNETES_SERVICE_HOST" in os.environ:
             config.load_incluster_config()
         else:
             config.load_kube_config()
