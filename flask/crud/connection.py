@@ -80,13 +80,26 @@ def create_connection(username, hostname, password, protocol="rdp", port="3389")
 
         # Update entry
         cursor.execute(
-            "INSERT INTO guacamole_connection_parameter VALUES \
-                (connection_id[0], 'hostname', hostname), \
-                (connection_id[0], 'port', port), \
-                (connection_id[0], 'username', username), \
-                (connection_id[0], 'password', password), \
-                (connection_id[0], 'ignore-cert', 'true');"
+            "INSERT INTO guacamole_connection_parameter VALUES (%s, 'hostname', %s);",
+            (connection_id[0], hostname),
         )
+        cursor.execute(
+            "INSERT INTO guacamole_connection_parameter VALUES (%s, 'port', %s);",
+            (connection_id[0], port),
+        )
+        cursor.execute(
+            "INSERT INTO guacamole_connection_parameter VALUES (%s, 'username', %s);",
+            (connection_id[0], username),
+        )
+        cursor.execute(
+            "INSERT INTO guacamole_connection_parameter VALUES (%s, 'password', %s);",
+            (connection_id[0], password),
+        )
+        cursor.execute(
+            "INSERT INTO guacamole_connection_parameter VALUES (%s, 'ignore-cert', %s);",
+            (connection_id[0], 'true'),
+        )
+
     else:
         logger.error(
             "Connection ID already exists - use update",
@@ -145,7 +158,7 @@ def update_connection(username, hostname, password, protocol="rdp", port="3389")
         )
         cursor.execute(
             "UPDATE guacamole_connection_parameter SET parameter_value='true' WHERE connection_id=%s AND parameter_name='ignore-cert';",
-            (connection_id[0]),
+            (connection_id[0],),
         )
 
     # Close communication with the database
