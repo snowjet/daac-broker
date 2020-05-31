@@ -2,13 +2,13 @@ import os
 
 import psycopg2
 import psycopg2.extras
+import pybreaker
 
 from core.log import logger
 from db.database import DataBase
 
 logger.info("Get DB instance")
 db = DataBase()
-
 
 def get_database_connection():
     # Read-only integer attribute:
@@ -28,10 +28,6 @@ def disconnect_from_database():
     logger.info("Closing DB connection")
     db.db_conn.close()
     logger.info("Closed DB connection")
-
-
-def test():
-    return "Test"
 
 
 def load_schema_safe():

@@ -1,0 +1,34 @@
+kind: LocalConfig
+apiversion: odo.dev/v1alpha1
+ComponentSettings:
+  Type: python
+  SourceLocation: ./
+  SourceType: local
+  Ports:
+  - 8080/tcp
+  Application: app
+  Project: daac-tst
+  Name: daac-api
+  Envs:
+  - Name: APP_SCRIPT
+    Value: start.sh
+  - Name: POSTGRES_HOST
+    Value: postgres
+  - Name: POSTGRES_PORT
+    Value: "5432"
+  - Name: POSTGRES_USER
+    Value: postgres
+  - Name: POSTGRES_PASSWORD
+    Value: postgres
+  - Name: POSTGRES_DB
+    Value: guacamole_db
+  - Name: client_id
+    Value: daac
+  - Name: client_secret
+    Value: 0f2b264e-f6b4-4cf7-8b43-0ac75f288563
+  - Name: sso_url
+    Value: https://sso-daac-tst.apps.shared.na.openshift.opentlc.com/auth/realms/master
+  Url:
+  - Name: daac
+    Port: 8080
+    Secure: true

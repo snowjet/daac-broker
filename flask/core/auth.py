@@ -11,8 +11,8 @@ from core.log import logger
 from core.authman import Auth0Management
 from models.user import User, UserInDB
 
-auth0_mgmt = Auth0Management()
-
+# auth0_mgmt = Auth0Management()
+# need to create binding for SSO/KetCloak Role Lookup
 
 def requires_auth(f):
     @wraps(f)

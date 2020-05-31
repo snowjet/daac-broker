@@ -55,3 +55,9 @@ auth0_config["daac_redirect_domain"] = os.getenv(
     "daac_redirect_domain", "127.0.0.1:5000"
 )
 auth0_config["admin_role"] = os.getenv("admin_role", "guacadmin")
+
+sso_config = {}
+sso_config["client_id"] = os.getenv("client_id", "")
+sso_config["client_secret"] = os.getenv("client_secret", "")
+sso_config["sso_url"] = os.getenv("sso_url", "https://sso.apps-crc.testing/auth/master/")
+sso_config["SECRET_KEY"] = os.getenv("SECRET_KEY", "super secret random key")

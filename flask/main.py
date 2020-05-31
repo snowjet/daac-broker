@@ -19,7 +19,8 @@ from core.log import logger
 from crud.user import update_users_db_password
 from db.db_utils import load_schema_safe
 
-from api.auth0 import create_auth0_blueprint
+#from api.auth0 import create_auth0_blueprint
+from api.sso import create_sso_blueprint
 from api.admin import admin_blueprint
 from api.users import users_blueprint
 
@@ -35,7 +36,7 @@ app.config["BOOTSTRAP_SERVE_LOCAL"] = False
 bootstrap = Bootstrap(app)
 oauth = OAuth(app)
 
-auth0_blueprint = create_auth0_blueprint(oauth)
+auth0_blueprint = create_sso_blueprint(oauth)
 app.register_blueprint(auth0_blueprint)
 app.register_blueprint(admin_blueprint)
 app.register_blueprint(users_blueprint)
