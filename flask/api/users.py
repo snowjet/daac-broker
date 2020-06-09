@@ -29,7 +29,7 @@ users_blueprint = Blueprint("users_blueprint", __name__)
 def read_user_me():
     userinfo = session["profile"]
 
-    return userinfo["name"]
+    return userinfo["username"]
 
 
 @users_blueprint.route("/users/connection", methods=["GET", "POST"])

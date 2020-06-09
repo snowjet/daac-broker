@@ -56,10 +56,12 @@ def delete_connection_for_user(username):
     if _allowed_to_delete_daac(username, hostname):
         logger.info("Attempting to Delete Connection", user=username)
         dc_msg, svc_msg = delete_daac(username, username_digest)
-        
+
         rows = delete_connection(username, hostname)
 
-        logger.info("Attempted to Delete Connection", user=username, dc=dc_msg, svc=svc_msg)
+        logger.info(
+            "Attempted to Delete Connection", user=username, dc=dc_msg, svc=svc_msg
+        )
 
     return True
 

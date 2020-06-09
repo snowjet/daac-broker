@@ -10,6 +10,7 @@ from db.database import DataBase
 logger.info("Get DB instance")
 db = DataBase()
 
+
 def get_database_connection():
     # Read-only integer attribute:
     # 0 if the connection is open

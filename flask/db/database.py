@@ -6,6 +6,7 @@ from core.log import logger
 
 db_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=60)
 
+
 class DataBase:
     def __init__(self):
 

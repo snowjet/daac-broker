@@ -2,7 +2,7 @@ bootstrap-flask
 starlette
 pydantic
 openshift
-pyjwt
+pyjwt[crypto]
 psycopg2-binary
 gunicorn
 daiquiri

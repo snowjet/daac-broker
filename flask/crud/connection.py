@@ -97,7 +97,7 @@ def create_connection(username, hostname, password, protocol="rdp", port="3389")
         )
         cursor.execute(
             "INSERT INTO guacamole_connection_parameter VALUES (%s, 'ignore-cert', %s);",
-            (connection_id[0], 'true'),
+            (connection_id[0], "true"),
         )
 
     else:
@@ -218,7 +218,10 @@ def delete_connection(username, hostname):
 
         rows_deleted = 0
 
-        cursor.execute("DELETE FROM guacamole_connection WHERE connection_id = %s", (connection_id,))
+        cursor.execute(
+            "DELETE FROM guacamole_connection WHERE connection_id = %s",
+            (connection_id,),
+        )
 
         rows_deleted = cursor.rowcount
 

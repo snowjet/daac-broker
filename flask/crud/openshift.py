@@ -85,9 +85,9 @@ def _create_dc_body(username, desktop_name, password_hash):
                 "app.openshift.io/connects-to": "guacd",
             },
             "labels": {
-                "app.kubernetes.io/name" : "%s" % (desktop_name),
-                "app.kubernetes.io/part-of" : "dcaas",
-                },
+                "app.kubernetes.io/name": "%s" % (desktop_name),
+                "app.kubernetes.io/part-of": "dcaas",
+            },
             "name": "%s" % (desktop_name),
         },
         "spec": {
