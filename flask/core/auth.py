@@ -22,7 +22,7 @@ def requires_auth(f):
     def decorated(*args, **kwargs):
 
         if "profile" in session:
-            if username in session["profile"]:
+            if "username" in session["profile"]:
                 return f(*args, **kwargs)
         else:
             session["profile"] = {}
