@@ -42,7 +42,7 @@ def requires_auth(f):
                 session["profile"]["email"] = headers["X-Auth-Email"]
 
             g = Gravatar(session["profile"]["email"])
-            session["profile"]["picture"] = g.get_image(size=40, default='mp', force_default=False)
+            session["profile"]["picture"] = g.get_image(size=40, default='mm', force_default=False)
 
         return f(*args, **kwargs)
 
