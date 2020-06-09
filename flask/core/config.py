@@ -34,7 +34,7 @@ MAX_CONNECTIONS_COUNT = int(os.getenv("MAX_CONNECTIONS_COUNT", 10))
 MIN_CONNECTIONS_COUNT = int(os.getenv("MIN_CONNECTIONS_COUNT", 10))
 
 ALLOWED_HOSTS = CommaSeparatedStrings(os.getenv("ALLOWED_HOSTS", ""))
-SECRET_KEY = Secret(os.getenv("SECRET_KEY", "secret key for project"))
+SECRET_KEY = Secret(os.getenv("SECRET_KEY", "85aa579473e7692bf224c12ad8824b766eb9894890333a77"))
 
 # Set or retrieve OpenShift Namespace for
 namespace_filepath = "/run/secrets/kubernetes.io/serviceaccount/namespace"
