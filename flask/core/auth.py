@@ -36,7 +36,7 @@ def requires_auth(f):
 
         if "picture" not in session["profile"]:
             if "X-Auth-Email" not in headers:
-                logger("No email address provided, cannot lookup avatar")
+                logger.info("No email address provided, cannot lookup avatar")
                 session["profile"]["email"] = ''
             else:
                 session["profile"]["email"] = headers["X-Auth-Email"]

@@ -50,9 +50,10 @@ def dashboard():
 
     if len(connections) == 0:
         connections = None
-        print("dict1 is Empty")
+        logger.info("User has no connections")
 
     logger.debug("Connections", connection=connections, GUAC_URL=GUAC_URL)
+    logger.debug("Session Data", session=session["profile"])
 
     return render_template(
         "landing.html",
