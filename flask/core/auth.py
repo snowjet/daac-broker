@@ -23,13 +23,16 @@ def requires_auth(f):
 
         if "profile" in session:
             if "username" in session["profile"]:
+                logger.debug("Session Profile Exists")
                 return f(*args, **kwargs)
         else:
+            logger.debug("No Session Profile - Create Profile")
             session["profile"] = {}
 
         headers = dict(request.headers)
 
         if "X-Auth-Username" not in headers:
+            logger.debug("Missing Header X-Auth-Username")
             raise abort(403, description="Not Authenticated")
 
         session["profile"]["username"] = headers["X-Auth-Username"]
@@ -39,10 +42,12 @@ def requires_auth(f):
                 logger.info("No email address provided, cannot lookup avatar")
                 session["profile"]["email"] = ''
             else:
+                logger.debug("Header X-Auth-Email", email=headers["X-Auth-Email"])
                 session["profile"]["email"] = headers["X-Auth-Email"]
 
             g = Gravatar(session["profile"]["email"])
             session["profile"]["picture"] = g.get_image(size=40, default='mm', force_default=False)
+            logger.debug("Avatar Lookup", picture=session["profile"]["picture"])            
 
         return f(*args, **kwargs)
 
