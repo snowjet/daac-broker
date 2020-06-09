@@ -14,6 +14,7 @@ from flask import redirect
 from flask import request
 
 from core.log import logger
+from libgravatar import Gravatar
 
 
 def requires_auth(f):
@@ -32,6 +33,16 @@ def requires_auth(f):
             raise abort(403, description="Not Authenticated")
 
         session["profile"]["username"] = headers["X-Auth-Username"]
+
+        if "picture" not in session["profile"]:
+            if "X-Auth-Email" not in headers:
+                logger("No email address provided, cannot lookup avatar")
+                session["profile"]["email"] = ''
+            else:
+                session["profile"]["email"] = headers["X-Auth-Email"]
+
+            g = Gravatar(session["profile"]["email"])
+            session["profile"]["picture"] = g.get_image(size=40, default='mp', force_default=False)
 
         return f(*args, **kwargs)
 

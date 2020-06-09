@@ -15,6 +15,6 @@ requests
 authlib
 six
 flask
-auth0-python
 wtforms
 pybreaker
+libgravatar
