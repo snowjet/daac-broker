@@ -12,7 +12,7 @@ This is the main frontend for DCaaS. It uses auth0 for authenication. It will au
 PROJECT_NAME=DCaaS API Broker
 
 # Postgres
-POSTGRES_HOST=127.0.0.1
+POSTGRES_SERVICE_HOST=127.0.0.1
 POSTGRES_PORT=5432
 POSTGRES_USER=guac
 POSTGRES_PASSWORD=guac_pass
@@ -21,12 +21,6 @@ POSTGRES_DB=guacamole_db
 SECRET_KEY=SOME SECRET VALUE
 
 LOG_LEVEL=debug
-
-# Auth0
-client_id=''
-client_secret=''
-auth0_domain=''
-ROOT_APP_DOMAIN=''
 ```
 
 ### Service Account
@@ -46,12 +40,16 @@ admin-0                 /admin                                                  
 system:deployers        /system:deployer                                                                              deployer
 system:image-builders   /system:image-builder                                                                         builder
 system:image-pullers    /system:image-puller                                            system:serviceaccounts:guac
-
 ```
 
 ### OpenShift
 ```
-oc new-app --name guac-api -e POSTGRES_HOST='127.0.0.1' -e POSTGRES_USER='guac' -e POSTGRES_PASSWORD='guac_pass' -e POSTGRES_DATABASE='guacamole_db' -e APP_HOME=flask https://github.com/snowjet/daac-broker.git
+oc new-app --name guac-api \
+    -e POSTGRES_SERVICE_HOST='127.0.0.1' \
+    -e POSTGRES_USER='guac' \
+    -e POSTGRES_PASSWORD='guac_pass' \
+    -e POSTGRES_DATABASE='guacamole_db' \
+    -e APP_HOME=flask https://github.com/snowjet/daac-broker.git
 ```
 
 ## Local Run
@@ -61,7 +59,7 @@ create a .env file with the required env variables
 PROJECT_NAME=DCaaS API Broker
 
 # Postgres
-POSTGRES_HOST=127.0.0.1
+POSTGRES_SERVICE_HOST=127.0.0.1
 POSTGRES_PORT=5432
 POSTGRES_USER=guac
 POSTGRES_PASSWORD=guac_pass
@@ -85,14 +83,6 @@ GUAC_URL= ''
 SECRET_KEY=SOME SECRET VALUE
 LOG_LEVEL=debug
 ```
-
-You will also need to configure Auth0 with localhost callbacks:
-
-| Argument               | Setting                        |
-|------------------------|:-------------------------------|
-| Allowed Callback URLs  | http://127.0.0.1:5000/callback | 
-| Allowed Logout URLs    | http://127.0.0.1:5000          |
-
 
 Port forward the posgtres database running on openshfit to the laptop
 ```
