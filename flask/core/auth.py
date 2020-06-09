@@ -20,8 +20,11 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
 
-        if "username" in session:
-            return f(*args, **kwargs)
+        if "profile" in session:
+            if username in session["profile"]:
+                return f(*args, **kwargs)
+        else:
+            session["profile"] = {}
 
         headers = dict(request.headers)
 

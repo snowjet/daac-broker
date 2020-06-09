@@ -47,4 +47,3 @@ else:
 
 sso_config = {}
 sso_config["PUBLIC_KEY"] = os.getenv("PUBLIC_KEY", "RSA Public Key")
-

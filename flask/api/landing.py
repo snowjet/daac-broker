@@ -27,6 +27,7 @@ from crud.user_conn import create_user_and_connection, delete_connection_for_use
 
 landing_blueprint = Blueprint("landing_blueprint", __name__)
 
+
 @landing_blueprint.route("/", methods=["GET", "POST"])
 @requires_auth
 def dashboard():
@@ -49,17 +50,17 @@ def dashboard():
 
     if len(connections) == 0:
         connections = None
-        print("dict1 is Empty")    
+        print("dict1 is Empty")
 
     logger.debug("Connections", connection=connections, GUAC_URL=GUAC_URL)
 
     return render_template(
         "landing.html",
         userinfo=session["profile"],
-        userinfo_pretty=json.dumps(session["jwt_payload"], indent=4),
         connections=connections,
         GUAC_URL=GUAC_URL,
     )
+
 
 @landing_blueprint.route("/logout")
 def logout():
@@ -68,4 +69,3 @@ def logout():
     # Redirect user to logout endpoint and then back to the home
 
     return redirect("/oauth/logout?" + "/")
-

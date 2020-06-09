@@ -36,7 +36,7 @@ def read_user_me():
 @requires_auth
 def user_connection():
 
-    username = session["profile"]["name"]
+    username = session["profile"]["username"]
 
     if request.method == "POST":
         if request.form["submit"] == "create_new_conn":
