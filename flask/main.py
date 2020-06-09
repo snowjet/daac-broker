@@ -13,7 +13,7 @@ from six.moves.urllib.parse import urlencode
 
 from flask_bootstrap import Bootstrap
 
-from core.config import LOG_LEVEL, GUACADMIN_PASSWORD
+from core.config import SECRET_KEY, LOG_LEVEL, GUACADMIN_PASSWORD
 from core.log import logger
 from crud.user import update_users_db_password
 from db.db_utils import load_schema_safe
@@ -29,6 +29,7 @@ else:
     DEBUG = False
 
 app = Flask(__name__)
+app.secret_key = SECRET_KEY
 app.config["BOOTSTRAP_SERVE_LOCAL"] = False
 
 bootstrap = Bootstrap(app)

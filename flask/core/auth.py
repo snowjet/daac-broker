@@ -63,6 +63,6 @@ def decode_jwt(auth_token, aud):
         aud = aud.split(",")
         payload = jwt.decode(auth_token, PUBLIC_KEY, audience=aud)
 
-        return "verified"
+        return "Verified"
     except:
-        return "verification failed with - %s" % sys.exc_info()[0]
+        return "Verification failed with - %s" % sys.exc_info()[0]
