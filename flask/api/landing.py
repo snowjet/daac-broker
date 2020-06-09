@@ -27,11 +27,9 @@ from crud.user_conn import create_user_and_connection, delete_connection_for_use
 
 landing_blueprint = Blueprint("landing_blueprint", __name__)
 
-
-@auth_blueprint.route("/", methods=["GET", "POST"])
+@landing_blueprint.route("/", methods=["GET", "POST"])
 @requires_auth
 def dashboard():
-
     username = session["profile"]["username"]
 
     if request.method == "POST":
@@ -63,7 +61,7 @@ def dashboard():
         GUAC_URL=GUAC_URL,
     )
 
-@auth_blueprint.route("/logout")
+@landing_blueprint.route("/logout")
 def logout():
     # Clear session stored data
     session.clear()
